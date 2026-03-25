@@ -8,6 +8,7 @@ abstract class AppIcons {
   static const String lockOpened = "${_svgAssetBasePath}LockOpened.svg";
   static const String lockClosed = "${_svgAssetBasePath}LockClosed.svg";
   static const String passwordIcon = "${_svgAssetBasePath}Password.svg";
+  static const String addTaskIcon = "${_svgAssetBasePath}addtask.svg";
 
 
 }
@@ -27,6 +28,7 @@ class AppIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return SvgPicture.asset(
       icon,
+      fit: BoxFit.contain,
       width: size,
       height: size,
       colorFilter: color != null

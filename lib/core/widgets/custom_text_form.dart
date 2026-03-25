@@ -80,6 +80,7 @@ class TextFormFiledBox extends StatelessWidget {
                     border: InputBorder.none,
                     hintText: (hintText),
                     hintStyle: TextStyle(
+                      height: 2.h,
                       fontFamily: 'Lexend Deca',
                       color: hintColor,
                       fontWeight: hintFontWeight,

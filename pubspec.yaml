@@ -85,9 +85,6 @@ flutter:
 
   assets:
     #images:
-    - assets/images/home_image.png
-    - assets/images/splash_image.png
-    - assets/images/lets_start.png
     - assets/images/palestine_flag.PNG
     - assets/icons/filterIcon.png
     #svg:
@@ -99,6 +96,7 @@ flutter:
     - assets/icons/LockClosed.svg
     - assets/icons/Profile.svg
     - assets/icons/Password.svg
+    - assets/icons/addtask.svg
 
 
   # To add assets to your application, add an assets section, like this:

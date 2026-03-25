@@ -1,16 +1,13 @@
-import 'package:to_do_app/features/login&register/views/register.dart';
-
-import '../../../core/network/api_helper.dart';
-import '../../../core/utils/app_icons.dart';
-import '../../../core/utils/shared_packages.dart';
-import '../../../core/widgets/custom_buttons_box.dart';
-import '../../../core/widgets/custom_text_form.dart';
-import '../../home/views/home_empty.dart';
-
+import '../../home/views/home_page.dart';
+import '../validators.dart';
+import 'register.dart';
+import '../../../../core/network/api_helper.dart';
+import '../../../../core/utils/app_icons.dart';
+import '../../../../core/utils/shared_packages.dart';
+import '../../../../core/widgets/custom_buttons_box.dart';
+import '../../../../core/widgets/custom_text_form.dart';
 
 class LoginPage extends StatefulWidget {
-  final bool passwordVisible = true;
-
   const LoginPage({super.key});
 
   @override
@@ -20,16 +17,19 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool passwordVisible = true;
   bool isLoading = false;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  var formKey = GlobalKey<FormState>();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+  }
+  void navigateTo(Widget page) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => page),
+    );
   }
 
   @override
@@ -54,9 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                       bottomRight: Radius.circular(20.r),
                     ),
                     image: DecorationImage(
-                      image: Image
-                          .asset(AppAssets.loginLogo)
-                          .image,
+                      image: Image.asset(AppAssets.loginLogo).image,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -64,12 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 23.h),
                 TextFormFiledBox(
                   controller: emailController,
-                  validator: (String? value) {
-                    RegExp emailRegex = RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                    bool result = emailRegex.hasMatch(value ?? '');
-                    return result ? null : 'Enter Valid Email';
-                  },
+                  validator: validateEmail,
                   boxColor: AppColors.appWhite,
                   boxStartIcon: AppIcon(icon: AppIcons.personLogin),
                   hintText: 'Username',
@@ -86,20 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 10.h),
                 TextFormFiledBox(
                   controller: passwordController,
-                  validator: (value) {
-                    if (value == null || value.length < 6) {
-                      return 'password must be at least 6 characters';
-                    }
-                    String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$';
-                    RegExp regExp = RegExp(pattern);
-
-                    // 3. التحقق هل النص يطابق النمط؟
-                    if (!regExp.hasMatch(value)) {
-                      return'Must contain at least one letter and one number';
-                    }
-
-                    return null;
-                  },
+                  validator: validatePassword,
                   boxColor: AppColors.appWhite,
                   boxStartIcon: AppIcon(icon: AppIcons.passwordIcon),
                   hintText: 'Password',
@@ -112,9 +92,11 @@ class _LoginPageState extends State<LoginPage> {
                   hintBorderColor: AppColors.appBorderColor1,
                   hintBorderWidth: 1,
                   boxEndIcon: InkWell(
-                    child: AppIcon(icon:
-                    passwordVisible ? AppIcons.lockClosed : AppIcons
-                        .lockOpened),
+                    child: AppIcon(
+                      icon: passwordVisible
+                          ? AppIcons.lockClosed
+                          : AppIcons.lockOpened,
+                    ),
                     onTap: () {
                       setState(() {
                         passwordVisible = !passwordVisible;
@@ -192,6 +174,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   void login() async {
     if (formKey.currentState?.validate() == true) {
       setState(() {
@@ -199,28 +188,33 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       var result = await APIHelper.login(
-          username: emailController.text, password: passwordController.text);
+        username: emailController.text,
+        password: passwordController.text,
+      );
 
       result.fold(
             (String error) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(error, style: const TextStyle(color: Colors.white)),
-            backgroundColor: Colors
-                .red,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error, style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.red,
+            ),
+          );
         },
             (userModel) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
                 'Login successfully\n Welcome ${userModel.username ?? "User"}',
-                style: TextStyle(color: AppColors.appWhite)),
-            backgroundColor: AppColors
-                .appGreen1,
-          ));
+                style: TextStyle(color: AppColors.appWhite),
+              ),
+              backgroundColor: AppColors.appGreen1,
+            ),
+          );
 
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const HomeEmpty()),
+            MaterialPageRoute(builder: (context) => const HomePage()),
 
                 (route) => false,
           );

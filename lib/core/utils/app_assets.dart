@@ -5,6 +5,7 @@ abstract class AppAssets{
   static const String letsStartLogo ="${_svgAssetBasePath}letsStart.svg";
   static const String homeLogo ="${_svgAssetBasePath}home.svg";
   static const String loginLogo ="${_imageAssetBasePath}palestine_flag.PNG";
+  static const String userPhoto ="${_imageAssetBasePath}palestine_flag.PNG";
 
 
 }

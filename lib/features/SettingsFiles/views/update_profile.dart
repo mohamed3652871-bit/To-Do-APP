@@ -10,7 +10,7 @@ class UpdateProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: appMainColor,
+        color: AppColors.appPrimaryColor,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(

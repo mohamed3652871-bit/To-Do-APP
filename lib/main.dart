@@ -1,9 +1,14 @@
 
-import 'core/utils/shared_packages.dart';
-import 'features/login&register/views/splash.dart';
 
-void main() async{
-  runApp(MyApp());
+import 'core/cache/cache_helper.dart';
+import 'core/network/api_helper.dart';
+import 'core/utils/shared_packages.dart';
+import 'features/auth/views/splash.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await CacheHelper.init(); // دي مهمة جداً طبعاً
+  APIHelper.init(); // ضيف السطر ده هنا
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,11 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(375, 812),
+      designSize: const Size(375, 812),
       builder: (context, widget) {
-        return MaterialApp(
+        return const MaterialApp(
           debugShowCheckedModeBanner: false,
-
           home: SplashScreen(),
         );
       },

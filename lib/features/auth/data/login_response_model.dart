@@ -1,5 +1,5 @@
 
-import 'package:to_do_app/features/login&register/auth/data_models/user_model.dart';
+import 'user_model.dart';
 
 class LoginResponseModel{
   String? accessToken;

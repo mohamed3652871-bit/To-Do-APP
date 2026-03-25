@@ -1,10 +1,9 @@
 import 'package:to_do_app/core/widgets/custom_buttons_box.dart';
 
-import '../../core/widgets/custom_text_form.dart';
+import '../../../core/widgets/custom_text_form.dart';
 import '/core/utils/shared_packages.dart';
 
 class EditTaskPage extends StatelessWidget {
-
   const EditTaskPage({super.key});
 
   @override
@@ -12,7 +11,8 @@ class EditTaskPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 48.h,
-        backgroundColor: appMainColor,
+        backgroundColor: AppColors.appPrimaryColor,
+
         leading: SizedBox(
           width: 21.w,
           height: 21.h,
@@ -73,15 +73,14 @@ class EditTaskPage extends StatelessWidget {
         actionsPadding: EdgeInsets.only(right: 20.w),
       ),
       body: Container(
-
-        color: appMainColor,
+        color: AppColors.appPrimaryColor,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.only(left: 24.w,right: 20.w),
+                padding: EdgeInsets.only(left: 24.w, right: 20.w),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -92,31 +91,53 @@ class EditTaskPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(50.r),
-                        image: DecorationImage(image: Image.asset(
-                          image1,
-                        ).image,fit: BoxFit.cover),
+                        image: DecorationImage(
+                          image: Image.asset(image1).image,
+                          fit: BoxFit.cover,
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withAlpha(65),
                             offset: Offset(0, 4),
                             blurRadius: 4,
-                          )
+                          ),
                         ],
-
                       ),
-                    ),//Profile Image
+                    ), //Profile Image
                     Container(
-                      padding: EdgeInsets.only(left:14.w,top: 12.h,bottom: 12.h ),
+                      padding: EdgeInsets.only(
+                        left: 14.w,
+                        top: 12.h,
+                        bottom: 12.h,
+                      ),
                       width: 251.w,
 
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('In Progress',style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w300,fontFamily: 'Lexend Deca',letterSpacing: 0,height: 1)),
-                          SizedBox(height: 2.h,),
-                          Text(r"Believe you can, and you're halfway there.",style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w300,fontFamily: 'Lexend Deca',letterSpacing: 0,height: 1),maxLines: 2,overflow: TextOverflow.ellipsis,),
-
-
+                          Text(
+                            'In Progress',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w300,
+                              fontFamily: 'Lexend Deca',
+                              letterSpacing: 0,
+                              height: 1,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            r"Believe you can, and you're halfway there.",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w300,
+                              fontFamily: 'Lexend Deca',
+                              letterSpacing: 0,
+                              height: 1,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                     ),
@@ -137,16 +158,22 @@ class EditTaskPage extends StatelessWidget {
                   shadowColor: Colors.transparent,
                   borderRadius: 15,
                   buttonChild: Container(
-                    padding: EdgeInsets.only(left: 16.w,right: 14.w),
+                    padding: EdgeInsets.only(left: 16.w, right: 14.w),
                     child: Row(
                       children: [
                         Container(
                           width: 28.w,
-                            height: 28.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.r),
-                              color: Color(0xffFFE4F2),),
-                            child: Icon(Icons.house,size: 18.r,color: Color(0xffFF1C92),)),
+                          height: 28.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.r),
+                            color: Color(0xffFFE4F2),
+                          ),
+                          child: Icon(
+                            Icons.house,
+                            size: 18.r,
+                            color: Color(0xffFF1C92),
+                          ),
+                        ),
                         Container(
                           padding: EdgeInsets.only(left: 12.w),
                           alignment: Alignment.centerLeft,
@@ -165,7 +192,6 @@ class EditTaskPage extends StatelessWidget {
                         ),
                         Spacer(),
                         Icon(Icons.keyboard_arrow_down_outlined, size: 21.r),
-
                       ],
                     ),
                   ),
@@ -188,8 +214,7 @@ class EditTaskPage extends StatelessWidget {
                   hintBorderWidth: 0,
                   borderRadius: 15,
                   boxColor: Colors.white,
-                  padding: EdgeInsets.only(left: 16.w,bottom: 19.h,top: 20.h),
-
+                  padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
                 ),
               ), //Title TextField
               SizedBox(height: 15.h),
@@ -224,7 +249,7 @@ class EditTaskPage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),//Description TextField
+              ), //Description TextField
               SizedBox(height: 15.h),
               Container(
                 decoration: BoxDecoration(
@@ -244,8 +269,7 @@ class EditTaskPage extends StatelessWidget {
                   boxColor: Colors.white,
                   //boxStartIcon: Icons.calendar_month,
                   startIconColor: Color(0xff149954),
-                  padding: EdgeInsets.only(left: 16.w,bottom: 19.h,top: 20.h),
-
+                  padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
                 ),
               ), //Date TextField
               SizedBox(height: 20.h),
@@ -269,8 +293,9 @@ class EditTaskPage extends StatelessWidget {
               SizedBox(height: 22.h),
               Container(
                 decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xff149954), width: 1.w),
-                  borderRadius: BorderRadius.circular(15.r),),
+                  border: Border.all(color: Color(0xff149954), width: 1.w),
+                  borderRadius: BorderRadius.circular(15.r),
+                ),
                 child: ElvButton(
                   onPressedFn: () {
                     print('Update Button');
@@ -289,8 +314,7 @@ class EditTaskPage extends StatelessWidget {
                   borderRadius: 14,
                   fontColor: Color(0xff149954),
                 ),
-              ),//Update Button
-
+              ), //Update Button
             ],
           ),
         ),

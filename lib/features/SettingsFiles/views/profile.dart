@@ -10,7 +10,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
         body: Container(
           padding: EdgeInsets.only(top:19.h,bottom:44.h,left:  20.w,right: 24.w),
-          color: appMainColor,
+          color: AppColors.appPrimaryColor,
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

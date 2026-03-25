@@ -32,4 +32,7 @@ abstract class CacheHelper {
   static Future removeValue(String key)async{
     prefs.remove(key);
   }
+  static Future<bool> clearData() async {
+    return await prefs.clear();
+  }
 }

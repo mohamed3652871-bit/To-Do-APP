@@ -14,7 +14,7 @@ class ChangeLanguage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: appMainColor,
+        color: AppColors.appPrimaryColor,
         width: double.infinity,
         height: double.infinity,
         padding: EdgeInsets.only(top: 26.h,left: 20.w,right: 22.w),
