@@ -1,4 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
+abstract class CacheKeys {
+  static final String accessToken = 'access_token';
+  static final String refreshToken = 'refresh_token';
+  static final String username = 'username';
+  static final String imagePath = 'image_path';
+
+}
 
 abstract class CacheHelper {
   static late SharedPreferences prefs;

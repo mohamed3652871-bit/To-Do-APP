@@ -9,6 +9,12 @@ abstract class AppIcons {
   static const String lockClosed = "${_svgAssetBasePath}LockClosed.svg";
   static const String passwordIcon = "${_svgAssetBasePath}Password.svg";
   static const String addTaskIcon = "${_svgAssetBasePath}addtask.svg";
+  static const String popDownIcon = "${_svgAssetBasePath}popDownIcon.svg";
+  static const String workTaskIcon = "${_svgAssetBasePath}workTaskIcon.svg";
+  static const String personalTaskIcon = "${_svgAssetBasePath}personalTaskIcon.svg";
+  static const String homeTaskIcon = "${_svgAssetBasePath}homeTaskIcon.svg";
+  static const String calendarIcon = "${_svgAssetBasePath}calendar.svg";
+
 
 
 }

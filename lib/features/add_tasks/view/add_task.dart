@@ -1,11 +1,23 @@
+import 'package:intl/intl.dart';
+import 'package:to_do_app/core/utils/app_icons.dart';
 import 'package:to_do_app/core/widgets/custom_buttons_box.dart';
 
+import '../../../core/network/api_helper.dart';
 import '../../../core/widgets/custom_text_form.dart';
-import '../../home/views/home_page.dart';
+import '../data/task_menu_model.dart';
 import '/core/utils/shared_packages.dart';
 
-class AddTask extends StatelessWidget {
-  const AddTask({super.key});
+class AddTask extends StatefulWidget {
+  final VoidCallback onTaskAdded;
+  const AddTask({super.key, required this.onTaskAdded});
+  @override
+  State<AddTask> createState() => _AddTaskState();
+}
+
+class _AddTaskState extends State<AddTask> {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
+  DateTime? selectedDateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -65,26 +77,30 @@ class AddTask extends StatelessWidget {
                   border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
                 ),
                 child: TextFormFiledBox(
+                  controller: titleController,
                   boxWidth: 331,
                   boxHeight: 63,
                   hintText: 'Title',
                   hintFontSize: 14,
                   hintFontWeight: FontWeight.w300,
-                  hintColor: Color(0xff6E6A7C),
+                  hintColor: AppColors.appTextColor2,
                   hintBorderColor: Colors.transparent,
                   hintBorderWidth: 0,
                   borderRadius: 15,
-                  boxColor: Colors.white,
-                  padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
+                  boxColor: AppColors.appWhite,
+                  padding: EdgeInsets.only(left: 16.w),
                 ),
               ), //Title TextField
               SizedBox(height: 15.h),
               Container(
                 width: 331.w,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.appWhite,
                   borderRadius: BorderRadius.circular(15.r),
-                  border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
+                  border: Border.all(
+                    color: AppColors.appBorderColor1,
+                    width: 1.w,
+                  ),
                 ),
                 constraints: BoxConstraints(minHeight: 63.h),
                 child: Row(
@@ -92,6 +108,7 @@ class AddTask extends StatelessWidget {
                     SizedBox(width: 16.w),
                     Expanded(
                       child: TextFormField(
+                        controller: descController,
                         minLines: 1,
                         maxLines: 6,
                         decoration: InputDecoration(
@@ -99,8 +116,9 @@ class AddTask extends StatelessWidget {
                           hintText: "Description",
                           hintStyle: TextStyle(
                             fontFamily: 'Lexend Deca',
+                            fontWeight: FontWeight.w300,
                             fontSize: 14.sp,
-                            color: Color(0xff6E6A7C),
+                            color: AppColors.appTextColor2,
                           ),
                         ),
                       ),
@@ -110,75 +128,170 @@ class AddTask extends StatelessWidget {
               ), //Description TextField
               SizedBox(height: 15.h),
               Container(
+                padding: EdgeInsets.only(right: 14.w),
+                height: 63.h,
+                width: 331.w,
                 decoration: BoxDecoration(
+                  color: AppColors.appWhite,
                   borderRadius: BorderRadius.circular(15.r),
-                  border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
-                ),
-                child: ElvButton(
-                  onPressedFn: () {},
-                  buttonHeight: 63,
-                  buttonWidth: 331,
-                  buttonColor: Colors.white,
-                  shadowColor: Colors.transparent,
-                  borderRadius: 15,
-                  buttonChild: Row(
-                    children: [
-                      SizedBox(width: 16.w),
-                      SizedBox(
-                        height: 18.h,
-                        child: Text(
-                          'Group',
-                          style: TextStyle(
-                            fontFamily: 'Lexend Deca',
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w300,
-                            color: Color(0xff6E6A7C),
-                            letterSpacing: 0,
-                            height: 1,
-                          ),
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(Icons.keyboard_arrow_down_outlined, size: 21.r),
-                      SizedBox(width: 21.w),
-                    ],
+                  border: Border.all(
+                    color: AppColors.appBorderColor1,
+                    width: 1.w,
                   ),
+                ),
+                child: DropdownButtonFormField(
+                  padding: EdgeInsets.only(left: 16.w, bottom: 21.h, top: 21.h),
+                  isDense: true,
+                  iconSize: 21,
+                  dropdownColor: AppColors.appWhite,
+                  icon: AppIcon(icon: AppIcons.popDownIcon),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    border: InputBorder.none,
+                    hintText: "Group",
+                    hintStyle: TextStyle(
+                      fontFamily: 'Lexend Deca',
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14.sp,
+                      color: AppColors.appTextColor2,
+                    ),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'Group 1',
+                      child: TaskChoiceModel(
+                        taskName: 'Home',
+                        taskIcon: AppIcons.homeTaskIcon,
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Group 2',
+                      child: TaskChoiceModel(
+                        taskName: 'Personal',
+                        taskIcon: AppIcons.personalTaskIcon,
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Group 3',
+                      child: TaskChoiceModel(
+                        taskName: 'Work',
+                        taskIcon: AppIcons.workTaskIcon,
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {},
                 ),
               ), //Group Button
               SizedBox(height: 15.h),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
-                  border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
-                ),
-                child: TextFormFiledBox(
-                  boxWidth: 331,
-                  boxHeight: 63,
-                  hintText: 'End Time',
-                  hintFontSize: 14,
-                  hintFontWeight: FontWeight.w300,
-                  hintColor: Color(0xff6E6A7C),
-                  hintBorderColor: Colors.transparent,
-                  hintBorderWidth: 0,
-                  borderRadius: 15,
-                  boxColor: Colors.white,
-                  // boxStartIcon: Icons.calendar_month,
-                  startIconColor: Color(0xff149954),
-                  padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
+              InkWell(
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+
+                  if (pickedDate != null) {
+                    TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+
+                    if (pickedTime != null) {
+                      setState(() {
+                        selectedDateTime = DateTime(
+                          pickedDate.year,
+                          pickedDate.month,
+                          pickedDate.day,
+                          pickedTime.hour,
+                          pickedTime.minute,
+                        );
+                      });
+                    }
+                  }
+                },
+                child: Container(
+                  width: 331.w,
+                  height: 63.h,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20.h,
+                    horizontal: 16.w,
+                  ),
+                  alignment: Alignment.centerLeft,
+                  decoration: BoxDecoration(
+                    color: AppColors.appWhite,
+                    borderRadius: BorderRadius.circular(15.r),
+                    border: Border.all(
+                      color: AppColors.appBorderColor1,
+                      width: 1.w,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      AppIcon(icon: AppIcons.calendarIcon, size: 24.r),
+                      SizedBox(width: 14.w),
+                      Text(
+                        selectedDateTime == null
+                            ? "End Time"
+                            : DateFormat(
+                                'dd MMMM, yyyy   hh:mm a',
+                              ).format(selectedDateTime!),
+                        style: TextStyle(
+                          fontFamily: 'Lexend Deca',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w300,
+                          color: selectedDateTime == null
+                              ? AppColors.appTextColor2
+                              : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ), //Date TextField
               SizedBox(height: 20.h),
               ElvButton(
-                onPressedFn: () {
-                  Navigator.pop(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                onPressedFn: () async {
+                  if (titleController.text.isEmpty ||
+                      descController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Please fill all fields")),
+                    );
+                    return;
+                  }
+
+                  String finalDescription = descController.text;
+                  if (selectedDateTime != null) {
+                    String formattedDate = DateFormat(
+                      'dd MMMM, yyyy  hh:mm a',
+                    ).format(selectedDateTime!);
+                    finalDescription += "\n\nEnd Time: $formattedDate";
+                  }
+
+                  var result = await APIHelper.addTask(
+                    title: titleController.text,
+                    description: finalDescription,
+                  );
+
+                  result.fold(
+                    (error) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(error)));
+                    },
+                    (task) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Task Added Successfully!")),
+                      );
+                      widget.onTaskAdded();
+                      Navigator.pop(context);                    },
                   );
                 },
                 buttonHeight: 48,
                 buttonWidth: 331,
-                buttonColor: Color(0xff149954),
-                shadowColor: Color(0xff149954),
+                buttonColor: AppColors.appGreen1,
+                shadowColor: AppColors.appGreen1,
                 text: 'Add Task ',
                 font: 'Lexend Deca',
                 offsetY: 5,

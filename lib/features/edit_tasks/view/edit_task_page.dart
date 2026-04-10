@@ -1,10 +1,37 @@
 import 'package:to_do_app/core/widgets/custom_buttons_box.dart';
-
 import '../../../core/widgets/custom_text_form.dart';
+import '../../home/data/task_model.dart';
+import '../../../core/network/api_helper.dart';
 import '/core/utils/shared_packages.dart';
 
-class EditTaskPage extends StatelessWidget {
-  const EditTaskPage({super.key});
+class EditTaskPage extends StatefulWidget {
+  final TaskModel task;
+
+  const EditTaskPage({super.key, required this.task});
+
+  @override
+  State<EditTaskPage> createState() => _EditTaskPageState();
+}
+
+class _EditTaskPageState extends State<EditTaskPage> {
+  late TextEditingController titleController;
+  late TextEditingController descController;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController =
+        TextEditingController(text: widget.task.title ?? "");
+    descController =
+        TextEditingController(text: widget.task.description ?? "");
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,15 +39,12 @@ class EditTaskPage extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 48.h,
         backgroundColor: AppColors.appPrimaryColor,
-
         leading: SizedBox(
           width: 21.w,
           height: 21.h,
           child: IconButton(
             padding: EdgeInsets.zero,
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             iconSize: 21.r,
             icon: Icon(Icons.arrow_back_ios),
           ),
@@ -36,10 +60,25 @@ class EditTaskPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+
+        /// DELETE
         actions: [
           ElvButton(
-            onPressedFn: () {
-              print('Register Button');
+            onPressedFn: () async {
+              final result = await APIHelper.deleteTask(
+                taskId: widget.task.id!,
+              );
+
+              result.fold(
+                    (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(error)),
+                  );
+                },
+                    (_) {
+                  Navigator.pop(context, true); // 🔥 مهم
+                },
+              );
             },
             buttonHeight: 28,
             buttonWidth: 80,
@@ -72,6 +111,7 @@ class EditTaskPage extends StatelessWidget {
         ],
         actionsPadding: EdgeInsets.only(right: 20.w),
       ),
+
       body: Container(
         color: AppColors.appPrimaryColor,
         width: double.infinity,
@@ -79,11 +119,10 @@ class EditTaskPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              /// HEADER
               Container(
                 padding: EdgeInsets.only(left: 24.w, right: 20.w),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
                       width: 80.w,
@@ -103,7 +142,7 @@ class EditTaskPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ), //Profile Image
+                    ),
                     Container(
                       padding: EdgeInsets.only(
                         left: 14.w,
@@ -111,7 +150,6 @@ class EditTaskPage extends StatelessWidget {
                         bottom: 12.h,
                       ),
                       width: 251.w,
-
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -121,20 +159,11 @@ class EditTaskPage extends StatelessWidget {
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w300,
                               fontFamily: 'Lexend Deca',
-                              letterSpacing: 0,
-                              height: 1,
                             ),
                           ),
                           SizedBox(height: 2.h),
                           Text(
                             r"Believe you can, and you're halfway there.",
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w300,
-                              fontFamily: 'Lexend Deca',
-                              letterSpacing: 0,
-                              height: 1,
-                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -144,66 +173,17 @@ class EditTaskPage extends StatelessWidget {
                   ],
                 ),
               ),
+
               SizedBox(height: 29.h),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
-                  border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
-                ),
-                child: ElvButton(
-                  onPressedFn: () {},
-                  buttonHeight: 63,
-                  buttonWidth: 331,
-                  buttonColor: Colors.white,
-                  shadowColor: Colors.transparent,
-                  borderRadius: 15,
-                  buttonChild: Container(
-                    padding: EdgeInsets.only(left: 16.w, right: 14.w),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 28.w,
-                          height: 28.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.r),
-                            color: Color(0xffFFE4F2),
-                          ),
-                          child: Icon(
-                            Icons.house,
-                            size: 18.r,
-                            color: Color(0xffFF1C92),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 12.w),
-                          alignment: Alignment.centerLeft,
-                          height: 18.h,
-                          child: Text(
-                            'Home',
-                            style: TextStyle(
-                              fontFamily: 'Lexend Deca',
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w300,
-                              color: Color(0xff6E6A7C),
-                              letterSpacing: 0,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(Icons.keyboard_arrow_down_outlined, size: 21.r),
-                      ],
-                    ),
-                  ),
-                ),
-              ), //Group Button
-              SizedBox(height: 15.h),
+
+              /// TITLE
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.r),
                   border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
                 ),
                 child: TextFormFiledBox(
+                  controller: titleController,
                   boxWidth: 331,
                   boxHeight: 63,
                   hintText: 'Title',
@@ -216,8 +196,11 @@ class EditTaskPage extends StatelessWidget {
                   boxColor: Colors.white,
                   padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
                 ),
-              ), //Title TextField
+              ),
+
               SizedBox(height: 15.h),
+
+              /// DESCRIPTION
               Container(
                 width: 331.w,
                 decoration: BoxDecoration(
@@ -231,74 +214,45 @@ class EditTaskPage extends StatelessWidget {
                     SizedBox(width: 16.w),
                     Expanded(
                       child: TextFormField(
+                        controller: descController,
                         minLines: 1,
                         maxLines: 6,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Description",
-                          hintStyle: TextStyle(
-                            fontFamily: 'Lexend Deca',
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w300,
-                            color: Color(0xff6E6A7C),
-                            letterSpacing: 0,
-                            height: 1,
-                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ), //Description TextField
-              SizedBox(height: 15.h),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
-                  border: Border.all(color: Color(0xffCDCDCD), width: 1.w),
-                ),
-                child: TextFormFiledBox(
-                  boxWidth: 331,
-                  boxHeight: 63,
-                  hintText: 'End Time',
-                  hintFontSize: 14,
-                  hintFontWeight: FontWeight.w300,
-                  hintColor: Color(0xff6E6A7C),
-                  hintBorderColor: Colors.transparent,
-                  hintBorderWidth: 0,
-                  borderRadius: 15,
-                  boxColor: Colors.white,
-                  //boxStartIcon: Icons.calendar_month,
-                  startIconColor: Color(0xff149954),
-                  padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
-                ),
-              ), //Date TextField
-              SizedBox(height: 20.h),
-              ElvButton(
-                onPressedFn: () {
-                  print('Register Button');
-                },
-                buttonHeight: 48,
-                buttonWidth: 331,
-                buttonColor: Color(0xff149954),
-                shadowColor: Color(0xff149954),
-                text: 'Mark ad Done ',
-                font: 'Lexend Deca',
-                offsetY: 5,
-                blurRadius: 4,
-                spreedR: 0,
-                fontWeight: FontWeight.w300,
-                fontSize: 19,
-                borderRadius: 14,
               ),
-              SizedBox(height: 22.h),
+
+              SizedBox(height: 20.h),
+
+              /// UPDATE BUTTON
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Color(0xff149954), width: 1.w),
                   borderRadius: BorderRadius.circular(15.r),
                 ),
                 child: ElvButton(
-                  onPressedFn: () {
-                    print('Update Button');
+                  onPressedFn: () async {
+                    final result = await APIHelper.updateTask(
+                      taskId: widget.task.id!,
+                      title: titleController.text,
+                      description: descController.text,
+                    );
+
+                    result.fold(
+                          (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(error)),
+                        );
+                      },
+                          (_) {
+                        Navigator.pop(context, true); // 🔥 مهم
+                      },
+                    );
                   },
                   buttonHeight: 48,
                   buttonWidth: 331,
@@ -314,7 +268,9 @@ class EditTaskPage extends StatelessWidget {
                   borderRadius: 14,
                   fontColor: Color(0xff149954),
                 ),
-              ), //Update Button
+              ),
+
+              SizedBox(height: 22.h),
             ],
           ),
         ),

@@ -15,6 +15,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Future<Either<String, List<TaskModel>>> tasksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    tasksFuture = APIHelper.getTasks();
+  }
+
+  void refreshTasks() {
+    setState(() {
+      tasksFuture = APIHelper.getTasks();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,20 +37,22 @@ class _HomePageState extends State<HomePage> {
         width: double.infinity,
         color: AppColors.appPrimaryColor,
         child: FutureBuilder<Either<String, List<TaskModel>>>(
-          future: APIHelper.getTasks(),
+          future: tasksFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
             return snapshot.data!.fold(
-                  (error) => Center(child: Text(error, style: TextStyle(color: Colors.red))),
-                  (tasks) {
+              (error) => Center(
+                child: Text(error, style: TextStyle(color: Colors.red)),
+              ),
+              (tasks) {
                 bool hasTasks = tasks.isNotEmpty;
 
                 return Column(
                   children: [
-                    MyAppBar(tasks: hasTasks),
+                    MyAppBar(tasks: hasTasks, onTaskAdded: refreshTasks),
                     Expanded(
                       child: hasTasks
                           ? _buildTasksList(tasks)
@@ -66,7 +82,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         SizedBox(height: 39.h),
-        SvgPicture.asset(AppAssets.homeLogo,height: 268.h),
+        SvgPicture.asset(AppAssets.homeLogo, height: 268.h),
 
         const Spacer(),
         _buildAddButton(context),
@@ -80,11 +96,9 @@ class _HomePageState extends State<HomePage> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       itemCount: tasks.length,
       itemBuilder: (context, index) => TaskBox(
-        taskTitle: tasks[index].title ?? "No title",
-        taskDescription: tasks[index].description ?? "No description",
-        creationTime: tasks[index].createdAt ?? "",
-      ),
-    );
+        task: tasks[index],
+        onUpdated: refreshTasks,
+      ),    );
   }
 
   Widget _buildAddButton(BuildContext context) {
@@ -94,7 +108,14 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: EdgeInsets.only(right: 25.w),
           child: InkWell(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTask())),
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddTask(onTaskAdded: refreshTasks),
+                ),
+              );
+            },
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -104,7 +125,13 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                     color: AppColors.appGreen1,
                     shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 4))],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
                   ),
                 ),
                 AppIcon(icon: AppIcons.addTaskIcon),

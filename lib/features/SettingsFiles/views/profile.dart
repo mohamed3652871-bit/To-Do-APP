@@ -1,4 +1,6 @@
 
+import 'package:to_do_app/features/SettingsFiles/views/update_profile.dart';
+
 import '../../../core/utils/shared_packages.dart';
 
 String userName="user name";
@@ -75,7 +77,11 @@ class ProfilePage extends StatelessWidget {
                 ),//header
                 SizedBox(height: 37.h,),
                 ButtonV2(
-                  onPressedFn: () {print("profile");},
+                  onPressedFn: () {Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) => UpdateProfile()
+
+                  ));},
                   text: 'Profile',
                   fontFamily: 'Lexend Deca',
                   fontSize: 16.sp,

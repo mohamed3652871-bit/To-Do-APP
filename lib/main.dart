@@ -6,8 +6,8 @@ import 'core/utils/shared_packages.dart';
 import 'features/auth/views/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await CacheHelper.init(); // دي مهمة جداً طبعاً
-  APIHelper.init(); // ضيف السطر ده هنا
+  await CacheHelper.init();
+  APIHelper.init();
   runApp(const MyApp());
 }
 

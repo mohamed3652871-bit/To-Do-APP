@@ -1,9 +1,8 @@
 import 'package:to_do_app/core/utils/shared_packages.dart';
 import '../../../core/cache/cache_helper.dart';
-import '../../../core/cache/cache_keys.dart';
 import '../../../core/network/tasks_count_helper.dart';
 import '../../home/views/home_page.dart';
-import 'lets_start.dart'; //
+import 'welcome_page.dart'; //
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    // ✅ فيه توكن → افحص التاسكات
     bool hasTasks = await AppFlowService.hasTasks();
 
     if (!mounted) return;

@@ -5,69 +5,84 @@ import '../../features/auth/data/login_response_model.dart';
 import '../../features/auth/data/user_model.dart';
 import '../../features/home/data/task_model.dart';
 import '../cache/cache_helper.dart';
-import '../cache/cache_keys.dart';
+import 'end_points.dart';
+
 abstract class APIHelper {
-  static final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://ntitodo-production-779a.up.railway.app/api/',
-      headers: {
-        'Accept': 'application/json',
-      },
-    ),
-  );
+  static final Dio _dio = Dio(BaseOptions(baseUrl: EndPoints.baseURL));
 
-  static void init() {
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        // تأكد إنك بتجيب التوكن وتستناه لو محتاج
-        final token = CacheHelper.getValue(CacheKeys.accessToken);
-
-        if (token != null && token.toString().isNotEmpty) {
-          options.headers['Authorization'] = 'Bearer $token';
-          print("Token Sent: Bearer $token"); // عشان تتأكد إنه مش null
-        } else {
-          print("Warning: Token is missing or empty!");
-        }
-        return handler.next(options);
-      },
-      onError: (e, handler) async {
-        if (e.response?.statusCode == 401) {
-          String? refreshToken = CacheHelper.getValue(CacheKeys.refreshToken);
-          if (refreshToken != null && refreshToken.isNotEmpty) {
-            try {
-              var response = await Dio().post(
-                'https://ntitodo-production-779a.up.railway.app/api/refresh_token',
-                data: {'refresh_token': refreshToken},
+  static Future init() async {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          print("--- Headers : ${options.headers.toString()}");
+          print("--- endpoint : ${options.path.toString()}");
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          print("--- Response : ${response.data.toString()}");
+          return handler.next(response);
+        },
+        onError: (DioException error, handler) async {
+          print("--- Error : ${error.response?.data.toString()}");
+          var errorResponse = error.response?.data as Map<String, dynamic>;
+          try {
+            if (errorResponse['message'].toString().contains(
+              'Token has expired.',
+            )) {
+              var result = await _dio.post(
+                EndPoints.refreshToken,
+                options: Options(
+                  headers: {
+                    'Authorization':
+                        'Bearer ${await CacheHelper.getValue(CacheKeys.refreshToken)}',
+                  },
+                ),
+              );
+              var accessData = result.data as Map<String, dynamic>;
+              await CacheHelper.setValue(
+                CacheKeys.accessToken,
+                accessData['access_token'],
               );
 
-              if (response.statusCode == 200) {
-                String newToken = response.data['access_token'] ?? response.data['token'];
-                await CacheHelper.setValue(CacheKeys.accessToken, newToken);
+              // Retry original request
+              final options = error.requestOptions;
+              if (options.data is FormData) {
+                final oldFormData = options.data as FormData;
 
-                e.requestOptions.headers['Authorization'] = 'Bearer $newToken';
-                final opts = Options(method: e.requestOptions.method, headers: e.requestOptions.headers);
-                final retryResponse = await _dio.request(
-                  e.requestOptions.path,
-                  options: opts,
-                  data: e.requestOptions.data,
-                  queryParameters: e.requestOptions.queryParameters,
-                );
-                return handler.resolve(retryResponse);
+                // Convert FormData to map so it can be rebuilt
+                final Map<String, dynamic> formMap = {};
+                for (var entry in oldFormData.fields) {
+                  formMap[entry.key] = entry.value;
+                }
+
+                // Add files if any
+                for (var file in oldFormData.files) {
+                  formMap[file.key] = file.value;
+                }
+
+                // Rebuild new FormData
+                options.data = FormData.fromMap(formMap);
               }
-            } catch (err) {
-              print("Refresh failed: $err");
-              await CacheHelper.clearData();
+              options.headers['Authorization'] =
+                  'Bearer ${CacheHelper.getValue(CacheKeys.accessToken) ?? ''}';
+              final response = await _dio.fetch(options);
+              return handler.resolve(response);
             }
+          } catch (e) {
+            // TODO Handle error if needed
           }
-        }
-        return handler.next(e);
-      },
-    ));
+
+          return handler.next(error);
+        },
+      ),
+    );
   }
+  //Auth
   static Future<Either<String, UserModel>> login({
     required String username,
     required String password,
-  }) async {
+  }) async
+  {
     try {
       var loginResponse = await _dio.post(
         'login',
@@ -83,12 +98,17 @@ abstract class APIHelper {
         return Left("User data is missing from server response");
       }
 
-      await CacheHelper.setValue(CacheKeys.accessToken, loginResponseModel.accessToken ?? "");
+      await CacheHelper.setValue(
+        CacheKeys.accessToken,
+        loginResponseModel.accessToken ?? "",
+      );
       await CacheHelper.setValue(CacheKeys.username, user.username ?? "User");
       await CacheHelper.setValue('name', user.username ?? "User");
-      await CacheHelper.setValue(CacheKeys.refreshToken, loginResponseModel.refreshToken ?? "");
+      await CacheHelper.setValue(
+        CacheKeys.refreshToken,
+        loginResponseModel.refreshToken ?? "",
+      );
       await CacheHelper.setValue(CacheKeys.imagePath, user.imagePath ?? "");
-      await CacheHelper.setValue(CacheKeys.userId, user.id ?? 0);
 
       return Right(user);
     } catch (e) {
@@ -103,12 +123,12 @@ abstract class APIHelper {
       }
     }
   }
-
   static Future<Either<String, String>> register({
     required String username,
     required String password,
     String? imagePath,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.post(
         'register',
@@ -137,10 +157,19 @@ abstract class APIHelper {
       }
     }
   }
-
-  static Future<Either<String, List<TaskModel>>> getTasks() async {
+  //Tasks
+  static Future<Either<String, List<TaskModel>>> getTasks() async
+  {
     try {
-      var response = await _dio.get('my_tasks');
+      var response = await _dio.get(
+        'my_tasks',
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+        ),
+      );
       var tasksResponse = response.data as Map<String, dynamic>;
       List<TaskModel> tasks = [];
       for (var taskJson in tasksResponse['tasks']) {
@@ -158,4 +187,195 @@ abstract class APIHelper {
       return Left('An Error occurred.');
     }
   }
+  static Future<Either<String, TaskModel>> addTask({
+    required String title,
+    required String description,
+  }) async
+  {
+    try {
+      var response = await _dio.post(
+        'new_task',
+        data: FormData.fromMap({'title': title, 'description': description}),
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+        ),
+      );
+
+      var taskData = response.data;
+      var taskModel = TaskModel.fromJson(taskData as Map<String, dynamic>);
+
+      return Right(taskModel);
+    } catch (e) {
+      if (e is DioException) {
+        var errorResponse = e.response?.data;
+        if (errorResponse is Map<String, dynamic>) {
+          return Left(errorResponse['message'] ?? 'Failed to add task');
+        }
+        return Left('Server error: ${e.response?.statusCode}');
+      } else {
+        return Left('An Error occurred while adding the task.');
+      }
+    }
+  }
+  static Future<Either<String,String>> updateTask({
+    required int taskId,
+    required String title,
+    required String description,
+  }) async
+  {
+    try{
+      var response = await _dio.put(
+          'tasks/$taskId',
+          data: {
+            'title': title,
+            'description': description,
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
+
+          )
+      );
+      var data =response.data as Map<String,dynamic>;
+      return right(data['message']??'Task updated successfully');
+    }
+    catch(e){
+
+      if(e is DioException) {
+        var data = e.response?.data as Map<String, dynamic>;
+        return left(data['message'] ?? 'Something went wrong');
+      }      else{
+        return left('Something went wrong');
+
+      }
+    }
+
+
+  }
+  static Future<Either<String,String>> deleteTask({
+    required int taskId,
+
+  }) async
+  {
+    try{
+      var response = await _dio.delete(
+          'tasks/$taskId',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
+
+          )
+      );
+      var data =response.data as Map<String,dynamic>;
+      return right(data['message']??'Task updated successfully');
+    }
+    catch(e){
+
+      if(e is DioException) {
+        var data = e.response?.data as Map<String, dynamic>;
+        return left(data['message'] ?? 'Something went wrong');
+      }      else{
+        return left('Something went wrong');
+
+      }
+    }
+
+
+  }
+  //Profile
+  static Future<Either<String, UserModel>> getUserData() async
+  {
+    try {
+      var response = await _dio.get(
+        'get_user_data',
+        options: Options(
+          headers: {
+            'Authorization':
+            'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+        ),
+      );
+      var userResponse = response.data as Map<String, dynamic>;
+      UserModel user = UserModel.fromJson(userResponse['user']);
+      return Right(user);
+    } catch (e) {
+      if (e is DioException) {
+        var errorResponse = e.response?.data;
+        if (errorResponse is Map) {
+          return Left(errorResponse['message'] ?? 'Unknown error');
+        }
+        return Left('Server error: ${e.response?.statusCode}');
+      }
+      return Left('An Error occurred.');
+    }
+  }
+  static Future<Either<String,String>> updateProfile({
+    required String userName,
+  }) async
+  {
+    try{
+      var response = await _dio.put(
+          'update_profile',
+          data: {
+            'username': userName,
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
+
+          )
+      );
+      var data =response.data as Map<String,dynamic>;
+      return right(data['message']??'Name updated successfully');
+    }
+    catch(e){
+
+      if(e is DioException) {
+        var data = e.response?.data as Map<String, dynamic>;
+        return left(data['message'] ?? 'Something went wrong');
+      }      else{
+        return left('Something went wrong');
+
+      }
+    }
+
+
+  }
+  static Future<Either<String,String>> deleteUserProfile({
+    required int taskId,
+
+  }) async
+  {
+    try{
+      var response = await _dio.delete(
+          'delete_user',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
+
+          )
+      );
+      var data =response.data as Map<String,dynamic>;
+      return right(data['message']??'User deleted successfully');
+    }
+    catch(e){
+
+      if(e is DioException) {
+        var data = e.response?.data as Map<String, dynamic>;
+        return left(data['message'] ?? 'Something went wrong');
+      }      else{
+        return left('Something went wrong');
+
+      }
+    }
+
+
+  }
+
+
+
+
 }
