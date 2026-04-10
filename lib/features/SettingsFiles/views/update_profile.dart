@@ -1,6 +1,8 @@
-
+import '../../../core/network/api_helper.dart';
 import '../../../core/utils/shared_packages.dart';
+import '../../../core/widgets/custom_buttons_box.dart';
 import '../../../core/widgets/custom_text_form.dart';
+
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
 
@@ -55,11 +57,45 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 hintColor: Color(0xff6E6A7C),
                 hintBorderColor: Color(0xffCDCDCD),
                 hintBorderWidth: 0,
-                padding: EdgeInsets.only(
-                  left: 16.w,
-                  bottom: 19.h,
-                  top: 20.h,
-                ),
+                padding: EdgeInsets.only(left: 16.w, bottom: 19.h, top: 20.h),
+              ),
+              SizedBox(height: 23.h),
+              ElvButton(
+                onPressedFn: () async {
+                  print(userNameController.text);
+                  var result = await APIHelper.updateProfile(userName: userNameController.text);
+                  result.fold(
+                        (error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(error),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    },
+                        (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    },
+                  );
+                },
+
+                buttonHeight: 48,
+                buttonWidth: 331,
+                buttonColor: Color(0xff149954),
+                shadowColor: Color(0xff149954),
+                text: 'Save ',
+                font: 'Lexend Deca',
+                offsetY: 5,
+                blurRadius: 4,
+                spreedR: 0,
+                fontWeight: FontWeight.w300,
+                fontSize: 19,
+                borderRadius: 14,
               ),
             ],
           ),

@@ -1,14 +1,17 @@
 
 import 'package:to_do_app/features/SettingsFiles/views/update_profile.dart';
 
+import '../../../core/cache/cache_helper.dart';
 import '../../../core/utils/shared_packages.dart';
+import 'change_password.dart';
 
-String userName="user name";
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+    String username = CacheHelper.getValue(CacheKeys.username) ?? 'Guest';
     return Scaffold(
         body: Container(
           padding: EdgeInsets.only(top:19.h,bottom:44.h,left:  20.w,right: 24.w),
@@ -49,7 +52,7 @@ class ProfilePage extends StatelessWidget {
                                       maxWidth: 200.w
                                   ),
                                   child: Text(
-                                    userName,
+                                    username,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(fontFamily: 'Lexend Deca',fontSize: 16.sp,fontWeight: FontWeight.w300,letterSpacing: 0),)
@@ -62,17 +65,7 @@ class ProfilePage extends StatelessWidget {
                         ],
                       ),
                     ),//avatar and name
-                    Spacer(),
-                    SizedBox(
-                      width: 24.w,
-                      height: 24.h,
-                      child: IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: (){
-                            print('add task');
-                          },
-                          icon: Icon(Icons.add_circle_outline,size: 24,)),
-                    )//add task button
+
                   ],
                 ),//header
                 SizedBox(height: 37.h,),
@@ -98,7 +91,11 @@ class ProfilePage extends StatelessWidget {
                 ),
                 SizedBox(height: 25,),
                 ButtonV2(
-                  onPressedFn: () {print("Change Password");},
+                  onPressedFn: () {Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangePassword()
+
+                      ));},
                   text: 'Change Password',
                   fontFamily: 'Lexend Deca',
                   fontSize: 16.sp,

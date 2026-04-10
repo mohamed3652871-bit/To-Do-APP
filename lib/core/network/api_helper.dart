@@ -44,27 +44,23 @@ abstract class APIHelper {
                 accessData['access_token'],
               );
 
-              // Retry original request
               final options = error.requestOptions;
               if (options.data is FormData) {
                 final oldFormData = options.data as FormData;
 
-                // Convert FormData to map so it can be rebuilt
                 final Map<String, dynamic> formMap = {};
                 for (var entry in oldFormData.fields) {
                   formMap[entry.key] = entry.value;
                 }
 
-                // Add files if any
                 for (var file in oldFormData.files) {
                   formMap[file.key] = file.value;
                 }
 
-                // Rebuild new FormData
                 options.data = FormData.fromMap(formMap);
               }
               options.headers['Authorization'] =
-                  'Bearer ${CacheHelper.getValue(CacheKeys.accessToken) ?? ''}';
+                  'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken) ?? ''}';
               final response = await _dio.fetch(options);
               return handler.resolve(response);
             }
@@ -77,12 +73,11 @@ abstract class APIHelper {
       ),
     );
   }
-  //Auth
+
   static Future<Either<String, UserModel>> login({
     required String username,
     required String password,
-  }) async
-  {
+  }) async {
     try {
       var loginResponse = await _dio.post(
         'login',
@@ -123,12 +118,12 @@ abstract class APIHelper {
       }
     }
   }
+
   static Future<Either<String, String>> register({
     required String username,
     required String password,
     String? imagePath,
-  }) async
-  {
+  }) async {
     try {
       var response = await _dio.post(
         'register',
@@ -157,9 +152,9 @@ abstract class APIHelper {
       }
     }
   }
+
   //Tasks
-  static Future<Either<String, List<TaskModel>>> getTasks() async
-  {
+  static Future<Either<String, List<TaskModel>>> getTasks() async {
     try {
       var response = await _dio.get(
         'my_tasks',
@@ -187,11 +182,11 @@ abstract class APIHelper {
       return Left('An Error occurred.');
     }
   }
+
   static Future<Either<String, TaskModel>> addTask({
     required String title,
     required String description,
-  }) async
-  {
+  }) async {
     try {
       var response = await _dio.post(
         'new_task',
@@ -220,81 +215,69 @@ abstract class APIHelper {
       }
     }
   }
-  static Future<Either<String,String>> updateTask({
+
+  static Future<Either<String, String>> updateTask({
     required int taskId,
     required String title,
     required String description,
-  }) async
-  {
-    try{
+  }) async {
+    try {
       var response = await _dio.put(
-          'tasks/$taskId',
-          data: {
-            'title': title,
-            'description': description,
+        'tasks/$taskId',
+        data: {'title': title, 'description': description},
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
           },
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
-
-          )
+        ),
       );
-      var data =response.data as Map<String,dynamic>;
-      return right(data['message']??'Task updated successfully');
-    }
-    catch(e){
-
-      if(e is DioException) {
+      var data = response.data as Map<String, dynamic>;
+      return right(data['message'] ?? 'Task updated successfully');
+    } catch (e) {
+      if (e is DioException) {
         var data = e.response?.data as Map<String, dynamic>;
         return left(data['message'] ?? 'Something went wrong');
-      }      else{
+      } else {
         return left('Something went wrong');
-
       }
     }
-
-
   }
-  static Future<Either<String,String>> deleteTask({
+
+  static Future<Either<String, String>> deleteTask({
     required int taskId,
-
-  }) async
-  {
-    try{
+  }) async {
+    try {
       var response = await _dio.delete(
-          'tasks/$taskId',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
-
-          )
+        'tasks/$taskId',
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+        ),
       );
-      var data =response.data as Map<String,dynamic>;
-      return right(data['message']??'Task updated successfully');
-    }
-    catch(e){
-
-      if(e is DioException) {
+      var data = response.data as Map<String, dynamic>;
+      return right(data['message'] ?? 'Task updated successfully');
+    } catch (e) {
+      if (e is DioException) {
         var data = e.response?.data as Map<String, dynamic>;
         return left(data['message'] ?? 'Something went wrong');
-      }      else{
+      } else {
         return left('Something went wrong');
-
       }
     }
-
-
   }
+
   //Profile
-  static Future<Either<String, UserModel>> getUserData() async
-  {
+  static Future<Either<String, UserModel>> getUserData() async {
     try {
       var response = await _dio.get(
         'get_user_data',
         options: Options(
           headers: {
             'Authorization':
-            'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
           },
         ),
       );
@@ -312,70 +295,93 @@ abstract class APIHelper {
       return Left('An Error occurred.');
     }
   }
-  static Future<Either<String,String>> updateProfile({
+
+  static Future<Either<String, String>> updateProfile({
     required String userName,
-  }) async
-  {
-    try{
+  }) async {
+    try {
       var response = await _dio.put(
-          'update_profile',
-          data: {
-            'username': userName,
+        'update_profile',
+        data: FormData.fromMap({
+          'username': userName.trim(),
+        }),
+        options: Options(
+          headers: {
+            'Authorization':
+            'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
           },
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
-
-          )
+        ),
       );
-      var data =response.data as Map<String,dynamic>;
-      return right(data['message']??'Name updated successfully');
-    }
-    catch(e){
 
-      if(e is DioException) {
+      var data = response.data as Map<String, dynamic>;
+      return right(data['message'] ?? 'Name updated successfully');
+    } catch (e) {
+      if (e is DioException) {
         var data = e.response?.data as Map<String, dynamic>;
         return left(data['message'] ?? 'Something went wrong');
-      }      else{
+      } else {
         return left('Something went wrong');
-
       }
     }
-
-
   }
-  static Future<Either<String,String>> deleteUserProfile({
+  static Future<Either<String, String>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String newPasswordConfirm,
+  }) async {
+    try {
+      var response = await _dio.post(
+        'change_password',
+        data: FormData.fromMap({
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'new_password_confirm': newPasswordConfirm,
+        }),
+        options: Options(
+          headers: {
+            'Authorization':
+            'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+        ),
+      );
+
+      var data = response.data as Map<String, dynamic>;
+      return right(data['message'] ?? 'Password updated successfully');
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.data is Map<String, dynamic>) {
+          var data = e.response?.data as Map<String, dynamic>;
+          return left(data['message'] ?? 'Something went wrong');
+        }
+        return left('Server error: ${e.response?.statusCode}');
+      }
+
+      return left('Something went wrong');
+    }
+  }
+
+  static Future<Either<String, String>> deleteUserProfile({
     required int taskId,
-
-  }) async
-  {
-    try{
+  }) async {
+    try {
       var response = await _dio.delete(
-          'delete_user',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'},
-
-          )
+        'delete_user',
+        options: Options(
+          headers: {
+            'Authorization':
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+        ),
       );
-      var data =response.data as Map<String,dynamic>;
-      return right(data['message']??'User deleted successfully');
-    }
-    catch(e){
-
-      if(e is DioException) {
+      var data = response.data as Map<String, dynamic>;
+      return right(data['message'] ?? 'User deleted successfully');
+    } catch (e) {
+      if (e is DioException) {
         var data = e.response?.data as Map<String, dynamic>;
         return left(data['message'] ?? 'Something went wrong');
-      }      else{
+      } else {
         return left('Something went wrong');
-
       }
     }
-
-
   }
-
-
-
-
 }
