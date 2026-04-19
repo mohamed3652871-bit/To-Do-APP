@@ -1,9 +1,8 @@
-
-
 import 'core/cache/cache_helper.dart';
 import 'core/network/api_helper.dart';
 import 'core/utils/shared_packages.dart';
 import 'features/auth/views/splash.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheHelper.init();

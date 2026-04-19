@@ -1,19 +1,19 @@
 class UserModel {
   int? id;
-  String? imagePath;
+  String? userImagePath;
   String? username;
 
-  UserModel({this.id, this.imagePath, this.username});
+  UserModel({this.id, this.userImagePath, this.username});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    imagePath = json['image_path'];
+    userImagePath = json['image_path']?.toString();
     username = json['username'];
   }
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "image_path": imagePath,
+    "image_path": userImagePath,
     "username": username
   };
 

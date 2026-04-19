@@ -8,6 +8,7 @@ abstract class AppColors{
   static const Color appTextColor2 = Color(0xff6E6A7C);
   static const Color appBorderColor1 = Color(0xffCDCDCD);
   static const Color taskBoxColor = Color(0xffCEEBDC);
+  static const Color appButtonRed = Colors.red;
 
 }
 

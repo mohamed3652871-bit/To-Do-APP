@@ -1,10 +1,12 @@
-import 'package:dartz/dartz.dart' hide State;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do_app/core/utils/app_icons.dart';
 import 'package:to_do_app/core/widgets/my_app_bar.dart';
 import 'package:to_do_app/features/add_tasks/view/add_task.dart';
-import '../../../core/network/api_helper.dart';
+import '../../../core/cache/cache_helper.dart';
 import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/task_box_widget.dart';
+import '../cubit/home_cubit.dart';
+import '../cubit/home_state.dart';
 import '../data/task_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,54 +17,49 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<Either<String, List<TaskModel>>> tasksFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    tasksFuture = APIHelper.getTasks();
-  }
-
-  void refreshTasks() {
-    setState(() {
-      tasksFuture = APIHelper.getTasks();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        height: double.maxFinite,
-        width: double.infinity,
-        color: AppColors.appPrimaryColor,
-        child: FutureBuilder<Either<String, List<TaskModel>>>(
-          future: tasksFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return BlocProvider(
+      create: (_) => HomeCubit()..getTasks(),
+      child: Scaffold(
+        body: Container(
+          height: double.maxFinite,
+          width: double.infinity,
+          color: AppColors.appPrimaryColor,
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (state is HomeLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            return snapshot.data!.fold(
-              (error) => Center(
-                child: Text(error, style: TextStyle(color: Colors.red)),
-              ),
-              (tasks) {
-                bool hasTasks = tasks.isNotEmpty;
+              if (state is HomeError) {
+                return Center(child: Text(state.message));
+              }
+
+              if (state is HomeSuccess) {
+                final tasks = state.tasks;
 
                 return Column(
                   children: [
-                    MyAppBar(tasks: hasTasks, onTaskAdded: refreshTasks),
+                    MyAppBar(
+                      tasks: tasks.isNotEmpty,
+                      onTaskAdded: () => context.read<HomeCubit>().refresh(),
+                      username:
+                          CacheHelper.getValue(CacheKeys.username) ?? "Guest",
+                      imagePath: CacheHelper.getValue(CacheKeys.userImage),
+                    ),
                     Expanded(
-                      child: hasTasks
+                      child: tasks.isNotEmpty
                           ? _buildTasksList(tasks)
                           : _buildEmptyState(context),
                     ),
                   ],
                 );
-              },
-            );
-          },
+              }
+
+              return const SizedBox();
+            },
+          ),
         ),
       ),
     );
@@ -92,13 +89,50 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTasksList(List<TaskModel> tasks) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-      itemCount: tasks.length,
-      itemBuilder: (context, index) => TaskBox(
-        task: tasks[index],
-        onUpdated: refreshTasks,
-      ),    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            SizedBox(width: 20.w),
+            Text(
+              "Tasks",
+              style: TextStyle(fontFamily: 'Lexend Deca', fontSize: 16.sp),
+            ),
+            SizedBox(width: 20.w),
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.taskBoxColor,
+
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+              width: 14.w,
+              height: 15.h,
+              child: Text(
+                "${tasks.length}",
+                style: TextStyle(
+                  fontFamily: 'Lexend Deca',
+                  fontSize: 11.sp,
+                  color: AppColors.appGreen1,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 31.h),
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            itemCount: tasks.length,
+            itemBuilder: (context, index) => TaskBox(
+              task: tasks[index],
+              onUpdated: () => context.read<HomeCubit>().refresh(),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildAddButton(BuildContext context) {
@@ -112,7 +146,9 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => AddTask(onTaskAdded: refreshTasks),
+                  builder: (_) => AddTask(
+                    onTaskAdded: () => context.read<HomeCubit>().refresh(),
+                  ),
                 ),
               );
             },

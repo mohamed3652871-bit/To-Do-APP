@@ -196,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                                         height: 18.h,
                                         child: TextButton(
                                           onPressed: () {
-                                            Navigator.pushReplacement(
+                                            Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>

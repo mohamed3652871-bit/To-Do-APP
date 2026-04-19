@@ -1,13 +1,22 @@
-import '../../features/SettingsFiles/views/profile.dart';
+import 'dart:io';
+
 import '../../features/add_tasks/view/add_task.dart';
+import '../../features/profile/views/profile.dart';
 import '../utils/shared_packages.dart';
 import '../cache/cache_helper.dart';
 
 class MyAppBar extends StatefulWidget {
-  const MyAppBar({super.key, required this.tasks, required this.onTaskAdded});
-
+  const MyAppBar({
+    super.key,
+    required this.username,
+    required this.tasks,
+    required this.onTaskAdded,
+    this.imagePath,
+  });
+  final String username;
   final bool tasks;
   final VoidCallback onTaskAdded;
+  final String? imagePath;
 
   @override
   State<MyAppBar> createState() => _MyAppBarState();
@@ -41,9 +50,14 @@ class _MyAppBarState extends State<MyAppBar> {
                         SizedBox(
                           height: 60.h,
                           width: 60.w,
-                          child: CircleAvatar(
+                          child:CircleAvatar(
                             backgroundColor: Colors.blue,
-                            backgroundImage: Image.asset(image1).image,
+                            backgroundImage: (widget.imagePath != null &&
+                                widget.imagePath!.startsWith('http'))
+                                ? NetworkImage(widget.imagePath!)
+                                : (widget.imagePath != null
+                                ? FileImage(File(widget.imagePath!))
+                                : AssetImage(image1)) as ImageProvider,
                           ),
                         ),
                         SizedBox(width: 16.w),
@@ -65,10 +79,11 @@ class _MyAppBarState extends State<MyAppBar> {
                             SizedBox(height: 4.h),
                             SizedBox(
                               height: 20.h,
+                              width: 232.w,
                               child: Text(
                                 username,
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                overflow: TextOverflow.fade,
                                 style: TextStyle(
                                   fontFamily: 'Lexend Deca',
                                   fontSize: 16.sp,
