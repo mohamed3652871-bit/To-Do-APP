@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_app/features/auth/cubit/splash_state.dart';
 import '../../../core/cache/cache_helper.dart';
 import '../../../core/network/tasks_count_helper.dart';
 
-part 'splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
   SplashCubit() : super(SplashInitial());
@@ -22,7 +22,7 @@ class SplashCubit extends Cubit<SplashState> {
     if (hasTasks) {
       emit(SplashGoToHome());
     } else {
-      emit(SplashGoToHome());
+      emit(SplashGoToHome()); // ممكن تغيرها بعدين لو في flow مختلف
     }
   }
 }

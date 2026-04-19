@@ -4,16 +4,29 @@ String? validateEmail(String? value) {
   return result ? null : 'Enter Valid Email';
 }
 
-String? validatePassword(value) {
-  if (value == null || value.length < 6) {
-    return 'password must be at least 6 characters';
+String? validatePassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Password is required';
   }
-  String pattern =
-      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$';
-  RegExp regExp = RegExp(pattern);
 
-  if (!regExp.hasMatch(value)) {
-    return "Min 6 chars, upper, lower, number & symbol";
+  if (value.length < 6) {
+    return 'Password must be at least 6 characters';
+  }
+
+  if (!RegExp(r'[A-Z]').hasMatch(value)) {
+    return 'Must contain at least 1 uppercase letter';
+  }
+
+  if (!RegExp(r'[a-z]').hasMatch(value)) {
+    return 'Must contain at least 1 lowercase letter';
+  }
+
+  if (!RegExp(r'\d').hasMatch(value)) {
+    return 'Must contain at least 1 number';
+  }
+
+  if (!RegExp(r'[@$!%*?&]').hasMatch(value)) {
+    return 'Must contain at least 1 symbol';
   }
 
   return null;
