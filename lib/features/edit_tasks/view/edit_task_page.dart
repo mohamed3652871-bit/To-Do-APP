@@ -229,7 +229,6 @@ class _EditTaskPageState extends State<EditTaskPage> {
 
               SizedBox(height: 20.h),
 
-              /// UPDATE BUTTON
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Color(0xff149954), width: 1.w),
@@ -241,7 +240,10 @@ class _EditTaskPageState extends State<EditTaskPage> {
                       taskId: widget.task.id!,
                       title: titleController.text,
                       description: descController.text,
+
                     );
+                    print(titleController.text);
+                    print(descController.text);
 
                     result.fold(
                           (error) {
@@ -250,7 +252,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                         );
                       },
                           (_) {
-                        Navigator.pop(context, true); // 🔥 مهم
+                        Navigator.pop(context, true);
                       },
                     );
                   },

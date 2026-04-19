@@ -47,7 +47,6 @@ class TextFormFiledBox extends StatelessWidget {
       width: boxWidth.w,
       height: boxHeight.h,
       alignment: Alignment.center,
-      //        padding: EdgeInsets.only(left: 16.w,bottom: 19.h,top: 20.h),
       padding: padding,
       decoration: BoxDecoration(
         color: boxColor,
@@ -76,6 +75,7 @@ class TextFormFiledBox extends StatelessWidget {
                   obscureText: obSecureText,
                   obscuringCharacter: obscureChar,
                   decoration: InputDecoration(
+                    errorMaxLines: 1,
                     isCollapsed: true,
                     border: InputBorder.none,
                     hintText: (hintText),

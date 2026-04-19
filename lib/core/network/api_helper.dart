@@ -77,10 +77,11 @@ abstract class APIHelper {
   static Future<Either<String, UserModel>> login({
     required String username,
     required String password,
-  }) async {
+  }) async
+  {
     try {
       var loginResponse = await _dio.post(
-        'login',
+        EndPoints.login,
         data: FormData.fromMap({'username': username, 'password': password}),
       );
 
@@ -123,10 +124,11 @@ abstract class APIHelper {
     required String username,
     required String password,
     String? imagePath,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.post(
-        'register',
+        EndPoints.register,
         data: FormData.fromMap({
           'username': username,
           'password': password,
@@ -154,10 +156,11 @@ abstract class APIHelper {
   }
 
   //Tasks
-  static Future<Either<String, List<TaskModel>>> getTasks() async {
+  static Future<Either<String, List<TaskModel>>> getTasks() async
+  {
     try {
       var response = await _dio.get(
-        'my_tasks',
+        EndPoints.getTasks,
         options: Options(
           headers: {
             'Authorization':
@@ -186,10 +189,11 @@ abstract class APIHelper {
   static Future<Either<String, TaskModel>> addTask({
     required String title,
     required String description,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.post(
-        'new_task',
+        EndPoints.newTask,
         data: FormData.fromMap({'title': title, 'description': description}),
         options: Options(
           headers: {
@@ -220,11 +224,15 @@ abstract class APIHelper {
     required int taskId,
     required String title,
     required String description,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.put(
-        'tasks/$taskId',
-        data: {'title': title, 'description': description},
+        '${EndPoints.updateTask}$taskId',
+        data: FormData.fromMap({
+          'title': title,
+          'description': description,
+        }),
         options: Options(
           headers: {
             'Authorization':
@@ -246,10 +254,11 @@ abstract class APIHelper {
 
   static Future<Either<String, String>> deleteTask({
     required int taskId,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.delete(
-        'tasks/$taskId',
+        '${EndPoints.updateTask}$taskId',
         options: Options(
           headers: {
             'Authorization':
@@ -270,10 +279,11 @@ abstract class APIHelper {
   }
 
   //Profile
-  static Future<Either<String, UserModel>> getUserData() async {
+  static Future<Either<String, UserModel>> getUserData() async
+  {
     try {
       var response = await _dio.get(
-        'get_user_data',
+        EndPoints.getUserData,
         options: Options(
           headers: {
             'Authorization':
@@ -298,10 +308,11 @@ abstract class APIHelper {
 
   static Future<Either<String, String>> updateProfile({
     required String userName,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.put(
-        'update_profile',
+        EndPoints.updateUserName,
         data: FormData.fromMap({
           'username': userName.trim(),
         }),
@@ -328,10 +339,11 @@ abstract class APIHelper {
     required String currentPassword,
     required String newPassword,
     required String newPasswordConfirm,
-  }) async {
+  }) async
+  {
     try {
       var response = await _dio.post(
-        'change_password',
+        EndPoints.changePassword,
         data: FormData.fromMap({
           'current_password': currentPassword,
           'new_password': newPassword,
@@ -360,12 +372,11 @@ abstract class APIHelper {
     }
   }
 
-  static Future<Either<String, String>> deleteUserProfile({
-    required int taskId,
-  }) async {
+  static Future<Either<String, String>> deleteUserProfile() async
+  {
     try {
       var response = await _dio.delete(
-        'delete_user',
+        EndPoints.deleteUser,
         options: Options(
           headers: {
             'Authorization':

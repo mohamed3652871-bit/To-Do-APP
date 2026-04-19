@@ -2,6 +2,7 @@ import '../../../core/network/api_helper.dart';
 import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/custom_buttons_box.dart';
 import '../../../core/widgets/custom_text_form.dart';
+import '../../auth/views/login.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
@@ -62,7 +63,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
               SizedBox(height: 23.h),
               ElvButton(
                 onPressedFn: () async {
-                  print(userNameController.text);
                   var result = await APIHelper.updateProfile(userName: userNameController.text);
                   result.fold(
                         (error) {
@@ -89,6 +89,72 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 buttonColor: Color(0xff149954),
                 shadowColor: Color(0xff149954),
                 text: 'Save ',
+                font: 'Lexend Deca',
+                offsetY: 5,
+                blurRadius: 4,
+                spreedR: 0,
+                fontWeight: FontWeight.w300,
+                fontSize: 19,
+                borderRadius: 14,
+              ),
+              SizedBox(height: 23.h),
+              ElvButton(
+                onPressedFn: () async {
+                  final parentContext = context; // 🔥 مهم
+
+                  await showDialog(
+                    context: context,
+                    builder: (dialogContext) {
+                      return AlertDialog(
+                        title: Text("Confirm Delete"),
+                        content: Text("Are you sure you want to delete your account?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(dialogContext);
+                            },
+                            child: Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.pop(dialogContext);
+
+                              var result = await APIHelper.deleteUserProfile();
+
+                              if (!mounted) return;
+
+                              result.fold(
+                                    (error) {
+                                  ScaffoldMessenger.of(parentContext).showSnackBar(
+                                    SnackBar(
+                                      content: Text(error),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                },
+                                    (success) {
+                                  Navigator.pushReplacement(
+                                    parentContext,
+                                    MaterialPageRoute(builder: (_) => LoginPage()),
+                                  );
+                                },
+                              );
+                            },
+                            child: Text(
+                              "Delete",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                buttonHeight: 48,
+                buttonWidth: 331,
+                buttonColor: Color(0xff149954),
+                shadowColor: Color(0xff149954),
+                text: 'DeleteUser ',
                 font: 'Lexend Deca',
                 offsetY: 5,
                 blurRadius: 4,

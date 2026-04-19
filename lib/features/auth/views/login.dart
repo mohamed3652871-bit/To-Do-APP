@@ -1,5 +1,5 @@
 import '../../home/views/home_page.dart';
-import '../validators.dart';
+import '../data/validators.dart';
 import 'register.dart';
 import '../../../../core/network/api_helper.dart';
 import '../../../../core/utils/app_icons.dart';

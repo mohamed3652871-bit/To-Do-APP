@@ -1,8 +1,11 @@
 
+import 'package:to_do_app/features/SettingsFiles/views/settings.dart';
 import 'package:to_do_app/features/SettingsFiles/views/update_profile.dart';
 
 import '../../../core/cache/cache_helper.dart';
 import '../../../core/utils/shared_packages.dart';
+import '../../../core/widgets/custom_buttons_box.dart';
+import '../../auth/views/login.dart';
 import 'change_password.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -112,7 +115,11 @@ class ProfilePage extends StatelessWidget {
                 ),
                 SizedBox(height: 25,),
                 ButtonV2(
-                  onPressedFn: () {print("Settings");},
+                  onPressedFn: () {Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) => Settings()
+
+                      ));},
                   text: 'Settings',
                   fontFamily: 'Lexend Deca',
                   fontSize: 16.sp,
@@ -127,6 +134,26 @@ class ProfilePage extends StatelessWidget {
                   buttonEndIcon: Icons.arrow_forward_ios,
                   endIconSize: 21.r,
                 ),
+                SizedBox(height: 25,),
+                ButtonV2(
+                  onPressedFn: () {
+                    CacheHelper.removeValue(CacheKeys.accessToken);
+                    CacheHelper.removeValue(CacheKeys.refreshToken);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                  },
+                  text: 'Logout',
+                  fontFamily: 'Lexend Deca',
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400,
+                  textColor: Colors.white,
+                  buttonColor: Colors.red,
+                  buttonWidth: 331.w,
+                  buttonHeight: 63.h,
+                  borderRadius: 15.r,
+                  buttonEndIcon: Icons.logout_outlined,
+                  endIconColor: Colors.white,
+                  endIconSize: 24.r,
+                ),
 
 
               ]
@@ -137,109 +164,3 @@ class ProfilePage extends StatelessWidget {
 }
 
 
-class ButtonV2 extends StatelessWidget {
-  final VoidCallback onPressedFn;
-  final String text;
-
-  final String fontFamily;
-  final FontWeight fontWeight;
-  final Color textColor;
-  final double fontSize;
-
-  final double buttonWidth;
-  final double buttonHeight;
-  final double borderRadius;
-
-  final IconData? buttonStartIcon;
-  final double? startIconSize;
-  final Color? startIconColor;
-  final IconData? buttonEndIcon;
-  final double? endIconSize;
-  final Color? endIconColor;
-
-  final Color buttonColor;
-  final Color shadowColor;
-  final double spreedR;
-  final double blurRadius;
-  final double offsetX;
-  final double offsetY;
-/////////////////////////////////////
-  const ButtonV2({
-    super.key,
-    required this.onPressedFn,
-
-    this.buttonWidth = 10,
-    this.buttonHeight = 10,
-    this.borderRadius = 0,
-
-    this.buttonColor = Colors.blue,
-    this.shadowColor = Colors.blue,
-    this.spreedR=0,
-    this.blurRadius = 0,
-    this.offsetX = 0,
-    this.offsetY = 0,
-
-    this.buttonStartIcon,
-    this.startIconSize,
-    this.startIconColor,
-
-
-    required this.text,
-    required this.fontFamily,
-    required this.fontWeight,
-    required this.textColor,
-    this.fontSize = 1,
-
-    this.buttonEndIcon,
-    this.endIconSize,
-    this.endIconColor,
-
-
-  });
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: buttonWidth.w,
-      height:buttonHeight.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius.r),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            offset: Offset(offsetX, offsetY),
-            blurRadius: blurRadius.r,
-            spreadRadius: spreedR.r,
-          ),
-        ],
-      ),
-
-
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.all(20),
-            backgroundColor: buttonColor,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius.r),
-            ),
-
-          ),
-          onPressed: onPressedFn,
-          child: Row(
-            children: [
-             if(buttonStartIcon!=null)
-               Icon(buttonStartIcon, size: 24, color: Colors.black,),
-              SizedBox(width: 16.w),
-              Text(text,style: TextStyle(fontFamily: fontFamily,fontWeight: fontWeight,fontSize: fontSize.sp,color: textColor,letterSpacing: 0,height: 1),),
-              Spacer(),
-              if(buttonEndIcon!=null)
-                Icon(buttonEndIcon, size: fontSize, color: Colors.black,),
-            ]
-          )
-      ),
-
-
-    );
-  }
-}

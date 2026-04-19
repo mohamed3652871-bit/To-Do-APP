@@ -7,8 +7,8 @@ Color enButtonColor=Color(0xff149954);
 Color arButtonColor=Color(0xffD9D9D9);
 
 
-class ChangeLanguage extends StatelessWidget {
-  const ChangeLanguage({super.key});
+class Settings extends StatelessWidget {
+  const Settings({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class ChangeLanguage extends StatelessWidget {
                  crossAxisAlignment: CrossAxisAlignment.center,
                  children: [
                   IconButton(onPressed: () {
-                    print("Back button pressed");
+                    Navigator.pop(context);
                   }, icon: Icon(Icons.arrow_back_ios),iconSize: 21.r,),
                    SizedBox(width: 110.w,),
                    Text("Settings",style: TextStyle(fontSize: 19.sp,fontWeight: FontWeight.w300,color: Colors.black,fontFamily: "Lexend Deca"),),
@@ -111,41 +111,3 @@ class ChangeLanguage extends StatelessWidget {
 
   }
 }
-/*
-Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            //ArButton
-                            Container(
-                              width: 51.w,
-                              height: 36.h,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Color(0xffD9D9D9),
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(5.r),bottomLeft: Radius.circular(5.r))
-                              ),
-                              child: Text("AR",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w300,color: Colors.black,fontFamily: "Lexend Deca")),
-
-                            ),
-                            //EnButton
-                            Container(
-                              width: 51.w,
-                              height: 36.h,
-                              alignment: Alignment.center,
-
-                              decoration: BoxDecoration(
-                                  color: Color(0xff149954),
-                                  borderRadius: BorderRadius.only(topRight: Radius.circular(5.r),bottomRight: Radius.circular(5.r))
-                              ),
-                              child: Text("EN",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w300,color: Colors.black,fontFamily: "Lexend Deca")),
-
-
-
-
-
-                            ),
-
-                          ],
-                        )
-*/
-

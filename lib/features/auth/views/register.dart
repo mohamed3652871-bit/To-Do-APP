@@ -4,7 +4,7 @@ import 'package:to_do_app/core/utils/app_icons.dart';
 import 'package:to_do_app/core/widgets/custom_buttons_box.dart';
 import 'package:to_do_app/core/widgets/custom_text_form.dart';
 
-import '../validators.dart';
+import '../data/validators.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -254,4 +254,3 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-//image: NetworkImage('https://images.pexels.com/photos/19322197/pexels-photo-19322197/free-photo-of-palestine-flags-waving-behind-tree.jpeg'))),
