@@ -65,7 +65,7 @@ class _AddTaskState extends State<AddTask> {
                   color: Colors.grey,
                   borderRadius: BorderRadius.circular(20.r),
                   image: DecorationImage(
-                    image: Image.asset(image1, fit: BoxFit.fill).image,
+                    image: Image.asset(AppAssets.userPhoto, fit: BoxFit.fill).image,
                     fit: BoxFit.cover,
                   ),
                 ),

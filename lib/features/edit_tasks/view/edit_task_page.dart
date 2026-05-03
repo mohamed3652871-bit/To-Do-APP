@@ -131,7 +131,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(50.r),
                         image: DecorationImage(
-                          image: Image.asset(image1).image,
+                          image: Image.asset(AppAssets.userPhoto).image,
                           fit: BoxFit.cover,
                         ),
                         boxShadow: [

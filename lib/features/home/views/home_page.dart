@@ -1,8 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:to_do_app/core/translation/translation_keys.dart';
 import 'package:to_do_app/core/utils/app_icons.dart';
 import 'package:to_do_app/core/widgets/my_app_bar.dart';
 import 'package:to_do_app/features/add_tasks/view/add_task.dart';
 import '../../../core/cache/cache_helper.dart';
+import '../../../core/cache/cache_keys.dart';
 import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/task_box_widget.dart';
 import '../cubit/home_cubit.dart';
@@ -26,6 +29,7 @@ class _HomePageState extends State<HomePage> {
           height: double.maxFinite,
           width: double.infinity,
           color: AppColors.appPrimaryColor,
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               if (state is HomeLoading) {
@@ -73,7 +77,7 @@ class _HomePageState extends State<HomePage> {
         SizedBox(
           width: 182.w,
           child: Text(
-            "There are no tasks yet, Press the button \nTo add New Task",
+            TranslationKeys.homeHint.tr,
             textAlign: TextAlign.center,
             style: TextStyle(fontFamily: 'Lexend Deca', fontSize: 16.sp),
           ),

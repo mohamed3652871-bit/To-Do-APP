@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
+import '../../../core/translation/translation_keys.dart';
 import '../../home/views/home_page.dart';
 import '../cubit/login_cubit.dart';
 import '../cubit/login_state.dart';
@@ -28,10 +30,13 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
   }
-
-  void navigateTo(Widget page) {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    'Login successfully\n Welcome ${state.user.username ?? "User"}',
+                    '${TranslationKeys.loginSnackBarA.tr} ${state.user.username ?? "User"}',
                   ),
                   backgroundColor: AppColors.appGreen1,
                 ),
@@ -67,6 +72,16 @@ class _LoginPageState extends State<LoginPage> {
           },
           builder: (context, state) {
             return Scaffold(
+              appBar: AppBar(
+                backgroundColor: AppColors.appWhite,
+                elevation: 0,
+                title: Text(TranslationKeys.login.tr,style: TextStyle(
+                  color: AppColors.appBlack,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                )),
+                centerTitle: true,
+              ),
                 body: Stack(
                     children: [
                       Form(
@@ -75,34 +90,19 @@ class _LoginPageState extends State<LoginPage> {
                           color: AppColors.appWhite,
                           width: double.infinity,
                           height: double.infinity,
-                          child: SingleChildScrollView(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 320.h,
                             child: Column(
                               children: [
-                                Container(
-                                  padding: EdgeInsets.only(top: 5),
-                                  width: 375.w,
-                                  height: 298.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(20.r),
-                                      bottomRight: Radius.circular(20.r),
-                                    ),
-                                    image: DecorationImage(
-                                      image: Image
-                                          .asset(AppAssets.loginLogo)
-                                          .image,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 23.h),
+                                ///email field
                                 TextFormFiledBox(
                                   controller: emailController,
                                   validator: validateEmail,
                                   boxColor: AppColors.appWhite,
                                   boxStartIcon: AppIcon(
                                       icon: AppIcons.personLogin),
-                                  hintText: 'Username',
+                                  hintText: TranslationKeys.emailHint.tr,
                                   borderRadius: 15,
                                   hintFontSize: 14,
                                   boxWidth: 331,
@@ -118,13 +118,14 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                                 SizedBox(height: 10.h),
+                                ///password field
                                 TextFormFiledBox(
                                   controller: passwordController,
                                   validator: validatePassword,
                                   boxColor: AppColors.appWhite,
                                   boxStartIcon: AppIcon(
                                       icon: AppIcons.passwordIcon),
-                                  hintText: 'Password',
+                                  hintText: TranslationKeys.passwordHint.tr,
                                   hintFontSize: 14,
                                   borderRadius: 15,
                                   boxWidth: 331,
@@ -168,8 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                                   buttonWidth: 331,
                                   buttonColor: AppColors.appGreen1,
                                   shadowColor: AppColors.appGreen1,
-                                  text: 'Login',
-                                  font: 'Lexend Deca',
+                                  text: TranslationKeys.login.tr,
                                   offsetY: 5,
                                   blurRadius: 4,
                                   spreedR: 0,
@@ -185,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        r"Don't Have An Account?",
+                                        TranslationKeys.loginPageHelp.tr,
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w300,
@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                                             minimumSize: Size(0, 0),
                                           ),
                                           child: Text(
-                                            "Register",
+                                            TranslationKeys.loginRegister.tr,
                                             style: TextStyle(
                                               color: AppColors.appBlack,
                                               fontSize: 14,
@@ -227,7 +227,18 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       if (state is AuthLoading)
-                        const Center(child: CircularProgressIndicator()),
+                        Container(
+                          color: Colors.grey.withAlpha(100),
+                            width: double.infinity,
+                            height: double.infinity,
+                            child:  Center(child: SizedBox(
+                              width: 75.w,
+                              height: 75.h,
+                              child: CircularProgressIndicator(
+                                color: AppColors.appGreen1,
+                                strokeWidth: 10,
+                              ),
+                            ))),
                     ]
                 )
             )
@@ -236,10 +247,5 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+
 }

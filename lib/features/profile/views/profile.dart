@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/cache/cache_helper.dart';
+import '../../../core/cache/cache_keys.dart';
 import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/my_app_bar.dart';
 import '../../../core/widgets/custom_buttons_box.dart';
 import '../../auth/views/login.dart';
-import '../../settings_files/views/change_password.dart';
-import '../../settings_files/views/settings.dart';
-import '../../settings_files/views/update_profile.dart';
+import '../../settings_page/views/change_password.dart';
+import '../../settings_page/views/settings.dart';
+import '../../settings_page/views/update_profile.dart';
 import '../cubit/profile_cubit.dart';
 import '../cubit/profile_state.dart';
 
@@ -31,27 +32,26 @@ class ProfilePage extends StatelessWidget {
               width: double.infinity,
               height: double.infinity,
               color: AppColors.appPrimaryColor,
-              child: Column(
-                children: [
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: 44.h,
+                  left: 20.w,
+                  right: 24.w,
+                ),
+                child: Column(
+                  children: [
 
-                  /// ✅ APP BAR (same Home style)
-                  MyAppBar(
-                    tasks: false,
-                    username: username,
-                    imagePath: CacheHelper.getValue(CacheKeys.userImage),
-                    onTaskAdded: () {},
-                  ),
+                    MyAppBar(
+                      onTapFun: (){},
+                      tasks: false,
+                      username: username,
+                      imagePath: CacheHelper.getValue(CacheKeys.userImage),
+                      onTaskAdded: () {},
+                    ),
 
-                  /// BODY
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 20.h,
-                          bottom: 44.h,
-                          left: 20.w,
-                          right: 24.w,
-                        ),
+
+                    Expanded(
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
 
@@ -162,8 +162,8 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

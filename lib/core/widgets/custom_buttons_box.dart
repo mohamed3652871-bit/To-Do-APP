@@ -84,7 +84,7 @@ class ElvButton extends StatelessWidget {
                     fontWeight: fontWeight,
                     fontFamily: font,
                     letterSpacing: 0,
-                    height: 1,
+                    height: 0,
                   ),
                 ),
               ],

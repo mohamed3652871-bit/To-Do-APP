@@ -1,29 +1,36 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:to_do_app/core/network/api_response.dart';
 
 import '../../features/auth/data/login_response_model.dart';
 import '../../features/auth/data/user_model.dart';
 import '../../features/home/data/task_model.dart';
 import '../cache/cache_helper.dart';
+import '../cache/cache_keys.dart';
 import 'end_points.dart';
 
 abstract class APIHelper {
-  static final Dio _dio = Dio(BaseOptions(baseUrl: EndPoints.baseURL));
+  static final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: EndPoints.baseURL,
+      connectTimeout: const Duration(seconds: 10),
+    ),
+  );
 
   static Future init() async {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          print("--- Headers : ${options.headers.toString()}");
-          print("--- endpoint : ${options.path.toString()}");
+          // print("--- Headers : ${options.headers.toString()}");
+          // print("--- endpoint : ${options.path.toString()}");
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          print("--- Response : ${response.data.toString()}");
+          // print("--- Response : ${response.data.toString()}");
           return handler.next(response);
         },
         onError: (DioException error, handler) async {
-          print("--- Error : ${error.response?.data.toString()}");
+          // print("--- Error : ${error.response?.data.toString()}");
           var errorResponse = error.response?.data as Map<String, dynamic>;
           try {
             if (errorResponse['message'].toString().contains(
@@ -73,6 +80,114 @@ abstract class APIHelper {
       ),
     );
   }
+
+  static Future<ApiResponse> postRequest({
+    required String endPoint,
+    required Map<String, dynamic>? data,
+    bool isFormData = false,
+    bool isAuthorized = false,
+  }) async
+  {
+    try {
+      final response = await _dio.post(
+        endPoint,
+        data: data == null
+            ? null
+            : isFormData
+            ? FormData.fromMap(data)
+            : data,
+        options: isAuthorized
+            ? Options(
+                headers: {
+                  'Authorization':
+                      'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}',
+                },
+              )
+            : null,
+      );
+      return ApiResponse.fromResponse(response);
+    } catch (e) {
+      return ApiResponse.fromError(e);
+    }
+  }
+
+  static Future<ApiResponse> getRequest({
+    required String endPoint,
+    Map<String, dynamic>? queryParameters,
+    bool isAuthorized=false,
+  }) async
+  {
+    try{
+      final response = await _dio.get(
+        endPoint,
+        queryParameters:queryParameters,
+        options:isAuthorized? Options(
+          headers: {
+            'Authorization':
+            'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}',
+          },
+      ):null
+      );
+      return ApiResponse.fromResponse(response);
+    }catch(e){
+      return ApiResponse.fromError(e);
+    }
+  }
+
+  static Future<ApiResponse> putRequest({
+    required String endPoint,
+    required Map<String, dynamic>? queryParameters,
+    bool isAuthorized=false,
+  })async
+  {
+    try{
+      final response=await _dio.put(
+        endPoint,
+        queryParameters:queryParameters,
+        options:isAuthorized? Options(
+          headers: {
+            'Authorization':
+            'Bearer ${CacheHelper.getValue(CacheKeys.accessToken)}'
+          }
+        ):null
+      );
+      return ApiResponse.fromResponse(response);
+    }catch(e){
+      return ApiResponse.fromError(e);
+    }
+  }
+  static Future<ApiResponse> deleteRequest({
+    required String endPoint,
+    required var data,
+    bool isAuthorized=false,
+    bool isFormData=false,
+  })async
+  {
+    try{
+      final response = await _dio.delete(
+          endPoint,
+          data: data == null
+              ? null
+              : isFormData
+              ? FormData.fromMap(data)
+              : data,
+          options: isAuthorized
+              ? Options(
+              headers: {
+                'Authorization':
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken) ?? ''}',
+              }
+          ):null
+      );
+      return ApiResponse.fromResponse(response);
+    }catch(e){
+      return ApiResponse.fromError(e);
+    }
+
+}
+
+
+
 
   static Future<Either<String, UserModel>> login({
     required String username,
@@ -229,10 +344,7 @@ abstract class APIHelper {
     try {
       var response = await _dio.put(
         '${EndPoints.updateTask}$taskId',
-        data: FormData.fromMap({
-          'title': title,
-          'description': description,
-        }),
+        data: FormData.fromMap({'title': title, 'description': description}),
         options: Options(
           headers: {
             'Authorization':
@@ -313,13 +425,11 @@ abstract class APIHelper {
     try {
       var response = await _dio.put(
         EndPoints.updateUserName,
-        data: FormData.fromMap({
-          'username': userName.trim(),
-        }),
+        data: FormData.fromMap({'username': userName.trim()}),
         options: Options(
           headers: {
             'Authorization':
-            'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
           },
         ),
       );
@@ -335,6 +445,7 @@ abstract class APIHelper {
       }
     }
   }
+
   static Future<Either<String, String>> changePassword({
     required String currentPassword,
     required String newPassword,
@@ -352,7 +463,7 @@ abstract class APIHelper {
         options: Options(
           headers: {
             'Authorization':
-            'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
+                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
           },
         ),
       );
@@ -372,8 +483,7 @@ abstract class APIHelper {
     }
   }
 
-  static Future<Either<String, String>> deleteUserProfile() async
-  {
+  static Future<Either<String, String>> deleteUserProfile() async {
     try {
       var response = await _dio.delete(
         EndPoints.deleteUser,
@@ -395,4 +505,7 @@ abstract class APIHelper {
       }
     }
   }
+
+
+
 }

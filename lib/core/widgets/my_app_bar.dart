@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:to_do_app/core/translation/translation_keys.dart';
+
 import '../../features/add_tasks/view/add_task.dart';
 import '../../features/profile/views/profile.dart';
+import '../cache/cache_keys.dart';
 import '../utils/shared_packages.dart';
 import '../cache/cache_helper.dart';
 
@@ -12,12 +16,13 @@ class MyAppBar extends StatefulWidget {
     required this.tasks,
     required this.onTaskAdded,
     this.imagePath,
+    this.onTapFun,
   });
   final String username;
   final bool tasks;
   final VoidCallback onTaskAdded;
   final String? imagePath;
-
+  final Function? onTapFun ;
   @override
   State<MyAppBar> createState() => _MyAppBarState();
 }
@@ -39,11 +44,13 @@ class _MyAppBarState extends State<MyAppBar> {
               child: Row(
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap:widget.onTapFun==null? () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ProfilePage()),
                       );
+                    }:(){
+                      widget.onTapFun;
                     },
                     child: Row(
                       children: [
@@ -57,7 +64,7 @@ class _MyAppBarState extends State<MyAppBar> {
                                 ? NetworkImage(widget.imagePath!)
                                 : (widget.imagePath != null
                                 ? FileImage(File(widget.imagePath!))
-                                : AssetImage(image1)) as ImageProvider,
+                                : AssetImage(AppAssets.placeHolder)) as ImageProvider,
                           ),
                         ),
                         SizedBox(width: 16.w),
@@ -68,7 +75,7 @@ class _MyAppBarState extends State<MyAppBar> {
                             SizedBox(
                               height: 15.h,
                               child: Text(
-                                'Hello!',
+                                TranslationKeys.hello.tr,
                                 style: TextStyle(
                                   fontFamily: 'Lexend Deca',
                                   fontSize: 12.sp,
