@@ -1,5 +1,5 @@
 abstract class EndPoints {
-  static const String baseURL = 'https://ntitodo-production-b847.up.railway.app/api/';
+  static const String baseURL = 'https://ntitodoapi-production-b6b7.up.railway.app/api/';
   static const String login = 'login';
   static const String register = 'register';
   static const String getTasks = 'my_tasks';

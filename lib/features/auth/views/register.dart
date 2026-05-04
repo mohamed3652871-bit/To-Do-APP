@@ -10,7 +10,7 @@ import 'package:to_do_app/core/widgets/custom_text_form.dart';
 
 import '../cubit/register_cubit.dart';
 import '../cubit/register_state.dart';
-import '../data/validators.dart';
+import '../../../core/widgets/validators.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {

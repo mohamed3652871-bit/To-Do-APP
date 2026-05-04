@@ -1,14 +1,13 @@
-
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:to_do_app/core/translation/translation_keys.dart';
 
 import '../../features/add_tasks/view/add_task.dart';
 import '../../features/profile/views/profile.dart';
 import '../cache/cache_keys.dart';
-import '../utils/shared_packages.dart';
 import '../cache/cache_helper.dart';
+import '../utils/shared_packages.dart';
 
-class MyAppBar extends StatefulWidget {
+class MyAppBar extends StatelessWidget {
   const MyAppBar({
     super.key,
     required this.username,
@@ -17,111 +16,100 @@ class MyAppBar extends StatefulWidget {
     this.imagePath,
     this.onTapFun,
   });
+
   final String username;
   final bool tasks;
   final VoidCallback onTaskAdded;
   final String? imagePath;
-  final Function? onTapFun ;
-  @override
-  State<MyAppBar> createState() => _MyAppBarState();
-}
-
-class _MyAppBarState extends State<MyAppBar> {
-  bool get tasks => widget.tasks;
+  final VoidCallback? onTapFun;
 
   @override
   Widget build(BuildContext context) {
-    String username = CacheHelper.getValue(CacheKeys.username) ?? 'Guest';
+    final width = MediaQuery.of(context).size.width;
+
+    final String usernameCached =
+        CacheHelper.getValue(CacheKeys.username) ?? 'Guest';
 
     return InkWell(
-      onTap:widget.onTapFun==null? () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
-      }:(){
-        widget.onTapFun;
-      },
+      onTap: onTapFun ??
+              () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfilePage()),
+            );
+          },
       child: Container(
-        padding: EdgeInsets.only(right:10.w,),
-        margin: EdgeInsets.only(bottom: 10.h),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+
+        // ✅ مفيش maxHeight → flexible
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(20.r),
-            bottomRight: Radius.circular(20.r),
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
           ),
           color: AppColors.appPrimaryColor,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: AppColors.appGreen1,
-              spreadRadius: 0,
-              blurRadius: 3,
-              blurStyle: BlurStyle.outer,
-
-              offset: Offset(0, 4),
+              blurRadius: 4,
+              offset: Offset(0, 2),
             )
           ],
         ),
+
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // 👤 Avatar
             Container(
-              height: 57.h,
-              width: 57.w,
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.all(2.r),
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.appBlack,
-                    spreadRadius: 0,
-                    blurRadius: 5,
-                    offset: Offset(0, 0),
-                  )
-                ],
                 color: AppColors.appBlack,
-                borderRadius: BorderRadius.circular(30.r),
+                shape: BoxShape.circle,
               ),
-              child:CircleAvatar(
-                backgroundImage: (widget.imagePath != null &&
-                    widget.imagePath!.startsWith('http'))
-                    ? NetworkImage(widget.imagePath!)
-                    : AssetImage(AppAssets.placeHolder)
+              child: CircleAvatar(
+                radius: width < 600 ? 24 : 28,
+                backgroundImage: (imagePath != null &&
+                    imagePath!.startsWith('http'))
+                    ? NetworkImage(imagePath!)
+                    : const AssetImage(AppAssets.placeHolder)
+                as ImageProvider,
               ),
-            ),//avatar
+            ),
+
+            const SizedBox(width: 10),
+
+            // 🧠 Text (مرن)
             Expanded(
               child: Text(
-                "${TranslationKeys.hello.tr}\n$username",
+                "${TranslationKeys.hello.tr}\n$usernameCached",
                 maxLines: 2,
-
-                overflow: TextOverflow.clip,
+                overflow: TextOverflow.ellipsis, // 🔥 يمنع overflow
                 style: TextStyle(
-                  letterSpacing: 0,
-                  fontSize: 16.sp,
+                  fontSize: width < 600 ? 14 : 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            ),//hello and name
-            if (widget.tasks)
-              SizedBox(
-                width: 50.w,
-                height: 50.h,
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddTask(
-                          onTaskAdded: widget.onTaskAdded,
-                        ),
+            ),
+
+            // ➕ زرار
+            if (tasks)
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AddTask(
+                        onTaskAdded: onTaskAdded,
                       ),
-                    );
-                  },
-                  icon: Icon(Icons.add_circle_outline, size: 24.r,color: AppColors.appGreen1),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  Icons.add_circle_outline,
+                  size: width < 600 ? 24 : 28,
+                  color: AppColors.appGreen1,
                 ),
-              ),//add task
+              ),
           ],
         ),
       ),

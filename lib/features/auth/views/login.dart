@@ -5,7 +5,7 @@ import '../../../core/translation/translation_keys.dart';
 import '../../home/views/home_page.dart';
 import '../cubit/login_cubit.dart';
 import '../cubit/login_state.dart';
-import '../data/validators.dart';
+import '../../../core/widgets/validators.dart';
 import 'register.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/shared_packages.dart';
@@ -211,9 +211,9 @@ class _LoginPageState extends State<LoginPage> {
                                           child: Text(
                                             TranslationKeys.loginRegister.tr,
                                             style: TextStyle(
-                                              color: AppColors.appBlack,
+                                              color: AppColors.appGreen1,
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: FontWeight.w900,
                                             ),
                                           ),
                                         ),

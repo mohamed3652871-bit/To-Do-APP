@@ -12,6 +12,7 @@ class ProfileUpdateCubit extends Cubit<ProfileUpdateState> {
 
     final result = await APIHelper.updateProfile(
       userName: username,
+
     );
 
     result.fold(
