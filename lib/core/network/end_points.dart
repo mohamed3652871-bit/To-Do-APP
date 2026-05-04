@@ -10,4 +10,7 @@ abstract class EndPoints {
   static const String newTask = 'new_task';
   static const String changePassword = 'change_password';
   static const String deleteUser = 'delete_user';
+  static const String emailKey = 'username';
+  static const String passWordKey = 'password';
+  static const String confPassWordKey = 'delete_user';
 }

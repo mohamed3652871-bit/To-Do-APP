@@ -2,14 +2,14 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:to_do_app/core/network/api_response.dart';
 
-import '../../features/auth/data/login_response_model.dart';
-import '../../features/auth/data/user_model.dart';
+import '../../features/auth/data/models/login_response_model.dart';
+import '../../features/auth/data/models/user_model.dart';
 import '../../features/home/data/task_model.dart';
 import '../cache/cache_helper.dart';
 import '../cache/cache_keys.dart';
 import 'end_points.dart';
 
-abstract class APIHelper {
+class APIHelper {
   static final Dio _dio = Dio(
     BaseOptions(
       baseUrl: EndPoints.baseURL,
@@ -81,7 +81,7 @@ abstract class APIHelper {
     );
   }
 
-  static Future<ApiResponse> postRequest({
+   Future<ApiResponse> postRequest({
     required String endPoint,
     required Map<String, dynamic>? data,
     bool isFormData = false,
@@ -91,10 +91,8 @@ abstract class APIHelper {
     try {
       final response = await _dio.post(
         endPoint,
-        data: data == null
-            ? null
-            : isFormData
-            ? FormData.fromMap(data)
+        data: isFormData
+            ? FormData.fromMap(data!)
             : data,
         options: isAuthorized
             ? Options(
@@ -111,7 +109,7 @@ abstract class APIHelper {
     }
   }
 
-  static Future<ApiResponse> getRequest({
+   Future<ApiResponse> getRequest({
     required String endPoint,
     Map<String, dynamic>? queryParameters,
     bool isAuthorized=false,
@@ -134,7 +132,7 @@ abstract class APIHelper {
     }
   }
 
-  static Future<ApiResponse> putRequest({
+   Future<ApiResponse> putRequest({
     required String endPoint,
     required Map<String, dynamic>? queryParameters,
     bool isAuthorized=false,
@@ -156,7 +154,7 @@ abstract class APIHelper {
       return ApiResponse.fromError(e);
     }
   }
-  static Future<ApiResponse> deleteRequest({
+   Future<ApiResponse> deleteRequest({
     required String endPoint,
     required var data,
     bool isAuthorized=false,

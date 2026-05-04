@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
+import '../../../core/network/api_helper.dart';
 import '../../../core/translation/translation_keys.dart';
 import '../../home/views/home_page.dart';
 import '../cubit/login_cubit.dart';
 import '../cubit/login_state.dart';
 import '../../../core/widgets/validators.dart';
+import '../data/repo/login_repo.dart';
 import 'register.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/shared_packages.dart';
@@ -23,8 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   bool passwordVisible = true;
   var formKey = GlobalKey<FormState>();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -32,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
   }
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -41,8 +43,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(),
-      child: BlocConsumer<AuthCubit, AuthState>(
+      create: (context) => LoginCubit(LoginRepo(APIHelper())),
+      child: BlocConsumer<LoginCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -97,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 ///email field
                                 TextFormFiledBox(
-                                  controller: emailController,
+                                  controller: _emailController,
                                   validator: validateEmail,
                                   boxColor: AppColors.appWhite,
                                   boxStartIcon: AppIcon(
@@ -120,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                                 SizedBox(height: 10.h),
                                 ///password field
                                 TextFormFiledBox(
-                                  controller: passwordController,
+                                  controller: _passwordController,
                                   validator: validatePassword,
                                   boxColor: AppColors.appWhite,
                                   boxStartIcon: AppIcon(
@@ -156,12 +158,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 SizedBox(height: 23.h),
                                 ElvButton(
-                                  onPressedFn: () {
+                                  onPressedFn: ()async {
                                     if (formKey.currentState?.validate() ==
                                         true) {
-                                      context.read<AuthCubit>().login(
-                                        username: emailController.text,
-                                        password: passwordController.text,
+                                      await LoginCubit.get(context).loginFun(
+                                        username: _emailController.text,
+                                        password: _passwordController.text,
+
                                       );
                                     }
                                   },
