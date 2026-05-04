@@ -1,113 +1,58 @@
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:to_do_app/core/translation/translation_keys.dart';
 import '../../../core/utils/shared_packages.dart';
+import '../../splash/views/splash.dart';
 
-Color enColor=Colors.white;
+Color enColor = Colors.white;
 Color? tempColor;
-Color arColor=Colors.black;
-Color enButtonColor=Color(0xff149954);
-Color arButtonColor=Color(0xffD9D9D9);
+Color arColor = Colors.black;
+Color enButtonColor = Color(0xff149954);
+Color arButtonColor = Color(0xffD9D9D9);
 
-
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   const Settings({super.key});
+
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+
+  void changeLanguage() {
+    if (Get.locale?.languageCode == 'en') {
+      Get.updateLocale(const Locale('ar'));
+    } else {
+      Get.updateLocale(const Locale('en'));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const SplashScreen(),));
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: AppColors.appPrimaryColor,
-        width: double.infinity,
-        height: double.infinity,
-        padding: EdgeInsets.only(top: 26.h,left: 20.w,right: 22.w),
-        child: SingleChildScrollView(
-          child:
-          Column(
-              children: [
-               Row(
-                 crossAxisAlignment: CrossAxisAlignment.center,
-                 children: [
-                  IconButton(onPressed: () {
-                    Navigator.pop(context);
-                  }, icon: Icon(Icons.arrow_back_ios),iconSize: 21.r,),
-                   SizedBox(width: 110.w,),
-                   Text("Settings",style: TextStyle(fontSize: 19.sp,fontWeight: FontWeight.w300,color: Colors.black,fontFamily: "Lexend Deca"),),
-                 ],
-               ),
-                SizedBox(height: 67.h,),
-                Row(
-                  children: [
-                    Text('Language',style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w300,color: Colors.black,fontFamily: "Lexend Deca"),),
-                    Spacer(),
+      appBar: AppBar(
+        backgroundColor: AppColors.appPrimaryColor,
+        centerTitle: true,
+        title: Text(TranslationKeys.settings.tr),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          children: [
+            ListTile(
 
-                    SizedBox(
-                      width: 102.w,
-                      height: 36.h,
-                      child:ElevatedButton(
-                        onPressed: (){
-                          tempColor = arColor;
-                          arColor = enColor;
-                          enColor= tempColor!;
-                          tempColor=arButtonColor;
-                          arButtonColor=enButtonColor;
-                          enButtonColor=tempColor!;
-                          
-                        },
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
-                        ),
-                        child: Row(
-                          children: [
-                            //ArButton
-                            Container(
-                              width: 51.w,
-                              height: 36.h,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: arButtonColor,
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(5.r),bottomLeft: Radius.circular(5.r))
-                              ),
-                              child: Text("AR",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w300,color: arColor,fontFamily: "Lexend Deca")),
-
-                            ),
-                            //EnButton
-                            Container(
-                              width: 51.w,
-                              height: 36.h,
-                              alignment: Alignment.center,
-
-                              decoration: BoxDecoration(
-                                  color: enButtonColor,
-                                  borderRadius: BorderRadius.only(topRight: Radius.circular(5.r),bottomRight: Radius.circular(5.r))
-                              ),
-                              child: Text("EN",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w300,color: enColor,fontFamily: "Lexend Deca")),
-
-
-
-
-
-                            ),
-
-                          ],
-                        ),
-                      )
-
-                    ),
-
-
-                  ],
-                )
-
-
-
-
-
-
-              ]
-          ),
+              leading: Text(
+                TranslationKeys.appLanguage.tr,
+                style: TextStyle(fontSize: 30.sp),
+              ),
+              trailing: IconButton(onPressed: () { changeLanguage();}, icon: Icon(Icons.language,size: 30.r,),),
+            ),
+          ],
         ),
       ),
     );
-
   }
 }
