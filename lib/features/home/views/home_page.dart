@@ -25,44 +25,48 @@ class _HomePageState extends State<HomePage> {
     return BlocProvider(
       create: (_) => HomeCubit()..getTasks(),
       child: Scaffold(
-        body: Container(
-          height: double.maxFinite,
-          width: double.infinity,
-          color: AppColors.appPrimaryColor,
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
-              if (state is HomeLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        body: SafeArea(
 
-              if (state is HomeError) {
-                return Center(child: Text(state.message));
-              }
+          child: Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                if (state is HomeLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (state is HomeSuccess) {
-                final tasks = state.tasks;
+                if (state is HomeError) {
+                  return Center(child: Text(state.message));
+                }
 
-                return Column(
-                  children: [
-                    MyAppBar(
-                      tasks: tasks.isNotEmpty,
-                      onTaskAdded: () => context.read<HomeCubit>().refresh(),
-                      username:
-                          CacheHelper.getValue(CacheKeys.username) ?? "Guest",
-                      imagePath: CacheHelper.getValue(CacheKeys.userImage),
-                    ),
-                    Expanded(
-                      child: tasks.isNotEmpty
-                          ? _buildTasksList(tasks)
-                          : _buildEmptyState(context),
-                    ),
-                  ],
-                );
-              }
+                if (state is HomeSuccess) {
+                  final tasks = state.tasks;
 
-              return const SizedBox();
-            },
+                  return Column(
+                    children: [
+                      MyAppBar(
+                        tasks: tasks.isNotEmpty,
+                        onTaskAdded: () => context.read<HomeCubit>().refresh(),
+                        username:
+                            CacheHelper.getValue(CacheKeys.username) ?? "Guest",
+                        imagePath: CacheHelper.getValue(CacheKeys.userImage),
+                      ),
+                      Expanded(
+                        child: tasks.isNotEmpty
+                            ? Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 20.w),
+                              child: _buildTasksList(tasks),
+                            )
+                            : _buildEmptyState(context),
+                      ),
+                    ],
+                  );
+                }
+
+                return const SizedBox();
+              },
+            ),
           ),
         ),
       ),
@@ -70,53 +74,51 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 123.h),
-        SizedBox(
-          width: 182.w,
-          child: Text(
+    return Scaffold(
+      floatingActionButton: _buildAddButton(context),
+      body:  Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
             TranslationKeys.homeHint.tr,
             textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: 'Lexend Deca', fontSize: 16.sp),
-          ),
-        ),
-        SizedBox(height: 39.h),
-        SvgPicture.asset(AppAssets.homeLogo, height: 268.h),
+            style: TextStyle( fontSize: 16.sp),
+          ),//no tasks yet
+          SizedBox(height: 39.h),
+          SvgPicture.asset(AppAssets.homeLogo, height: 268.h),
 
-        const Spacer(),
-        _buildAddButton(context),
-        SizedBox(height: 25.h),
-      ],
+
+          SizedBox(height: 25.h),
+        ],
+      ),
     );
+
+
   }
 
   Widget _buildTasksList(List<TaskModel> tasks) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 15.h),
         Row(
           children: [
-            SizedBox(width: 20.w),
             Text(
-              "Tasks",
-              style: TextStyle(fontFamily: 'Lexend Deca', fontSize: 16.sp),
+              TranslationKeys.tasks.tr,
+              style: TextStyle(color: AppColors.appBlack,fontWeight: FontWeight.w500, fontSize: 16.sp),
             ),
             SizedBox(width: 20.w),
             Container(
               alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 5.w,vertical:1.h),
               decoration: BoxDecoration(
                 color: AppColors.taskBoxColor,
-
                 borderRadius: BorderRadius.circular(5.r),
               ),
-              width: 14.w,
-              height: 15.h,
               child: Text(
                 "${tasks.length}",
                 style: TextStyle(
-                  fontFamily: 'Lexend Deca',
                   fontSize: 11.sp,
                   color: AppColors.appGreen1,
                 ),
@@ -124,11 +126,10 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        SizedBox(height: 31.h),
+        SizedBox(height: 15.h),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: tasks.length,
+            itemCount: (tasks.length),
             itemBuilder: (context, index) => TaskBox(
               task: tasks[index],
               onUpdated: () => context.read<HomeCubit>().refresh(),
@@ -140,46 +141,34 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildAddButton(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(right: 25.w),
-          child: InkWell(
-            onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AddTask(
-                    onTaskAdded: () => context.read<HomeCubit>().refresh(),
-                  ),
-                ),
-              );
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 50.r,
-                  height: 50.r,
-                  decoration: BoxDecoration(
-                    color: AppColors.appGreen1,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                ),
-                AppIcon(icon: AppIcons.addTaskIcon),
-              ],
+    return InkWell(
+      onTap: () async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AddTask(
+              onTaskAdded: () => context.read<HomeCubit>().refresh(),
             ),
           ),
+        );
+      },
+      child: Container(
+        width: 50.w,
+        height: 50.h,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.appGreen1,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.appBlack,
+              blurRadius: 4,
+              offset: Offset(0, 0),
+            ),
+          ],
         ),
-      ],
+        child: AppIcon(icon: AppIcons.addTaskIcon, size: 24.r)
+      ),
     );
   }
 }

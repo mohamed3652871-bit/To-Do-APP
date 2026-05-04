@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import '../../../core/cache/cache_helper.dart';
 import '../../../core/cache/cache_keys.dart';
+import '../../../core/translation/translation_keys.dart';
 import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/my_app_bar.dart';
 import '../../../core/widgets/custom_buttons_box.dart';
@@ -28,30 +30,23 @@ class ProfilePage extends StatelessWidget {
           }
 
           return Scaffold(
-            body: Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: AppColors.appPrimaryColor,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: 44.h,
-                  left: 20.w,
-                  right: 24.w,
-                ),
-                child: Column(
-                  children: [
-
-                    MyAppBar(
-                      onTapFun: (){},
-                      tasks: false,
-                      username: username,
-                      imagePath: CacheHelper.getValue(CacheKeys.userImage),
-                      onTaskAdded: () {},
-                    ),
-
-
-                    Expanded(
-                      child: SingleChildScrollView(
+            body: SafeArea(
+              child: Column(
+                children: [
+              
+                  MyAppBar(
+                    onTapFun: (){},
+                    tasks: false,
+                    username: username,
+                    imagePath: CacheHelper.getValue(CacheKeys.userImage),
+                    onTaskAdded: () {},
+                  ),
+              
+              
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 20.w),
                         child: Column(
                           children: [
 
@@ -66,7 +61,7 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 );
                               },
-                              text: 'Profile',
+                              text: TranslationKeys.profile.tr,
                               fontFamily: 'Lexend Deca',
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w400,
@@ -79,6 +74,11 @@ class ProfilePage extends StatelessWidget {
                               startIconSize: 24.r,
                               buttonEndIcon: Icons.arrow_forward_ios,
                               endIconSize: 21.r,
+                              shadowColor: Colors.black,
+                              spreedR: 0,
+                              blurRadius: 1,
+                              offsetX: 0,
+                              offsetY: 0,
                             ),
 
                             SizedBox(height: 25),
@@ -92,7 +92,7 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 );
                               },
-                              text: 'Change Password',
+                              text: TranslationKeys.changePassword.tr,
                               fontFamily: 'Lexend Deca',
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w400,
@@ -105,6 +105,11 @@ class ProfilePage extends StatelessWidget {
                               startIconSize: 24.r,
                               buttonEndIcon: Icons.arrow_forward_ios,
                               endIconSize: 21.r,
+                              shadowColor: Colors.black,
+                              spreedR: 0,
+                              blurRadius: 1,
+                              offsetX: 0,
+                              offsetY: 0,
                             ),
 
                             SizedBox(height: 25),
@@ -118,7 +123,7 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 );
                               },
-                              text: 'Settings',
+                              text: TranslationKeys.settings.tr,
                               fontFamily: 'Lexend Deca',
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w400,
@@ -131,6 +136,11 @@ class ProfilePage extends StatelessWidget {
                               startIconSize: 24.r,
                               buttonEndIcon: Icons.arrow_forward_ios,
                               endIconSize: 21.r,
+                              shadowColor: Colors.black,
+                              spreedR: 0,
+                              blurRadius: 1,
+                              offsetX: 0,
+                              offsetY: 0,
                             ),
 
                             SizedBox(height: 25),
@@ -145,7 +155,7 @@ class ProfilePage extends StatelessWidget {
                                       (route) => false,
                                 );
                               },
-                              text: 'Logout',
+                              text: TranslationKeys.logout.tr,
                               fontFamily: 'Lexend Deca',
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w400,
@@ -162,8 +172,8 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

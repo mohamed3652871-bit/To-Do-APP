@@ -11,6 +11,7 @@ void main() async {
   await CacheHelper.init();
   APIHelper.init();
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {

@@ -3,28 +3,30 @@ import 'package:to_do_app/features/auth/cubit/register_state.dart';
 import '../../../../core/network/api_helper.dart';
 import 'package:image_picker/image_picker.dart';
 
+
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit() : super(RegisterInitial());
   String? selectedImagePath;
-  final ImagePicker _picker = ImagePicker();
+
 
   Future<void> pickImage() async {
     final picker = ImagePicker();
 
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70,
+      imageQuality: 90,
     );
 
     if (pickedFile != null) {
-      emit(RegisterImagePicked(pickedFile.path));
+      selectedImagePath= pickedFile.path;
+      emit(RegisterImagePicked());
     }
   }
 
   Future<void> register({
     required String username,
     required String password,
-    required String imagePath,
+     String? imagePath,
   }) async
   {
     emit(RegisterLoading());

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:to_do_app/core/translation/translation_keys.dart';
@@ -34,110 +33,95 @@ class _MyAppBarState extends State<MyAppBar> {
   Widget build(BuildContext context) {
     String username = CacheHelper.getValue(CacheKeys.username) ?? 'Guest';
 
-    return SafeArea(
+    return InkWell(
+      onTap:widget.onTapFun==null? () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      }:(){
+        widget.onTapFun;
+      },
       child: Container(
-        margin: EdgeInsets.only(left: 20.w),
-        height: 60.h,
+        padding: EdgeInsets.only(right:10.w,),
+        margin: EdgeInsets.only(bottom: 10.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(20.r),
+            bottomRight: Radius.circular(20.r),
+          ),
+          color: AppColors.appPrimaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.appGreen1,
+              spreadRadius: 0,
+              blurRadius: 3,
+              blurStyle: BlurStyle.outer,
+
+              offset: Offset(0, 4),
+            )
+          ],
+        ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap:widget.onTapFun==null? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()),
-                      );
-                    }:(){
-                      widget.onTapFun;
-                    },
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 60.h,
-                          width: 60.w,
-                          child:CircleAvatar(
-                            backgroundColor: Colors.blue,
-                            backgroundImage: (widget.imagePath != null &&
-                                widget.imagePath!.startsWith('http'))
-                                ? NetworkImage(widget.imagePath!)
-                                : (widget.imagePath != null
-                                ? FileImage(File(widget.imagePath!))
-                                : AssetImage(AppAssets.placeHolder)) as ImageProvider,
-                          ),
-                        ),
-                        SizedBox(width: 16.w),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 11.h),
-                            SizedBox(
-                              height: 15.h,
-                              child: Text(
-                                TranslationKeys.hello.tr,
-                                style: TextStyle(
-                                  fontFamily: 'Lexend Deca',
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            SizedBox(
-                              height: 20.h,
-                              width: 232.w,
-                              child: Text(
-                                username,
-                                maxLines: 1,
-                                overflow: TextOverflow.fade,
-                                style: TextStyle(
-                                  fontFamily: 'Lexend Deca',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w300,
-                                  letterSpacing: 0,
-                                  height: 1,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (widget.tasks)
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Spacer(),
-                          SizedBox(
-                            width: 24.w,
-                            height: 24.h,
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddTask(
-                                      onTaskAdded: widget.onTaskAdded,
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: Icon(Icons.add_circle_outline, size: 24),
-                            ),
-                          ),
-                          InkWell(
-                            child: SizedBox(width: 20.w),
-                            onTap: () {},
-                          ),
-                        ],
-                      ),
-                    ),
+            Container(
+              height: 57.h,
+              width: 57.w,
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.all(2.r),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.appBlack,
+                    spreadRadius: 0,
+                    blurRadius: 5,
+                    offset: Offset(0, 0),
+                  )
                 ],
+                color: AppColors.appBlack,
+                borderRadius: BorderRadius.circular(30.r),
               ),
-            ),
+              child:CircleAvatar(
+                backgroundImage: (widget.imagePath != null &&
+                    widget.imagePath!.startsWith('http'))
+                    ? NetworkImage(widget.imagePath!)
+                    : AssetImage(AppAssets.placeHolder)
+              ),
+            ),//avatar
+            Expanded(
+              child: Text(
+                "${TranslationKeys.hello.tr}\n$username",
+                maxLines: 2,
+
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  letterSpacing: 0,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),//hello and name
+            if (widget.tasks)
+              SizedBox(
+                width: 50.w,
+                height: 50.h,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddTask(
+                          onTaskAdded: widget.onTaskAdded,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.add_circle_outline, size: 24.r,color: AppColors.appGreen1),
+                ),
+              ),//add task
           ],
         ),
       ),

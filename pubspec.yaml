@@ -94,23 +94,10 @@ flutter:
 
   assets:
     #images:
-    - assets/images/palestine_flag.PNG
-    - assets/icons/filterIcon.png
+    - assets/images/
+    - assets/icons/
     #svg:
-    - assets/svg/splash.svg
-    - assets/svg/letsStart.svg
-    - assets/svg/home.svg
-    #icon's svg:
-    - assets/icons/LockOpened.svg
-    - assets/icons/LockClosed.svg
-    - assets/icons/Profile.svg
-    - assets/icons/Password.svg
-    - assets/icons/addtask.svg
-    - assets/icons/popDownIcon.svg
-    - assets/icons/workTaskIcon.svg
-    - assets/icons/personalTaskIcon.svg
-    - assets/icons/homeTaskIcon.svg
-    - assets/icons/calendar.svg
+    - assets/svg/
 
 flutter_launcher_icons:
   android: "launcher_icon"

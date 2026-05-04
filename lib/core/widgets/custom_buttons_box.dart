@@ -141,7 +141,7 @@ class ButtonV2 extends StatelessWidget {
 
 
     required this.text,
-    required this.fontFamily,
+     this.fontFamily='',
     required this.fontWeight,
     required this.textColor,
     this.fontSize = 1,

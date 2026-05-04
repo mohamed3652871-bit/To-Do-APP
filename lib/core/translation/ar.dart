@@ -22,7 +22,11 @@ Map<String, String> ar = {
   TranslationKeys.passwordNotMatch : "كلمة السر غير متطابقة",
   TranslationKeys.pleasePickImage : "اختر صورة اولا",
   TranslationKeys.registerPageHelp : "تمتلك حساب بالفعل ؟",
-
+  TranslationKeys.tasks:"عدد المهام",
+  TranslationKeys.settings: 'الاعدادات',
+  TranslationKeys.profile:'تعديل الحساب',
+  TranslationKeys.changePassword:'تغيير كلمة السر',
+  TranslationKeys.logout:'تسجيل الخروج',
 
 
 

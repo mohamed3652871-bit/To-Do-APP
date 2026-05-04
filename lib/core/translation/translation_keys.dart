@@ -13,6 +13,11 @@ class TranslationKeys {
   static const String nameLabel = 'Full Name';
   static const String hello = 'Hello';
   static const String homeHint = 'homeHint';
+  static const String tasks = 'Tasks';
+  static const String settings = 'Settings';
+  static const String profile = 'profile';
+  static const String logout = 'logout';
+  static const String changePassword = 'changePassword';
 
   static const String email = 'email';
   static const String password = 'password';

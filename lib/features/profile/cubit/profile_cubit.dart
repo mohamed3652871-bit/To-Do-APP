@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/cache/cache_helper.dart';
 import '../../../core/cache/cache_keys.dart';
-import '../../../core/utils/shared_packages.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -11,25 +10,19 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileLoading());
 
     try {
-      final username =
-          CacheHelper.getValue(CacheKeys.username) ?? "Guest";
+      final username = CacheHelper.getValue(CacheKeys.username) ?? "Guest";
 
-      final image =
-      CacheHelper.getValue(CacheKeys.imagePath);
+      final image = CacheHelper.getValue(CacheKeys.userImage);
 
-      emit(ProfileLoaded(
-        username: username,
-        imagePath: image,
-      ));
+      emit(ProfileLoaded(username: username, imagePath: image));
     } catch (e) {
       emit(ProfileError("Failed to load profile"));
     }
   }
 
-  void logout() {
-    CacheHelper.removeValue(CacheKeys.accessToken);
-    CacheHelper.removeValue(CacheKeys.refreshToken);
-
-    emit(ProfileInitial());
+  void logout() async {
+    await CacheHelper.clearData().then((value) {
+      emit(ProfileInitial());
+    });
   }
 }

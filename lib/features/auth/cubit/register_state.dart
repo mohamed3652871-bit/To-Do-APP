@@ -12,7 +12,5 @@ class RegisterError extends RegisterState {
   RegisterError(this.message);
 }
 class RegisterImagePicked extends RegisterState {
-  final String imagePath;
 
-  RegisterImagePicked(this.imagePath);
 }

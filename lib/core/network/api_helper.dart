@@ -219,7 +219,7 @@ abstract class APIHelper {
         CacheKeys.refreshToken,
         loginResponseModel.refreshToken ?? "",
       );
-      await CacheHelper.setValue(CacheKeys.imagePath, user.userImagePath ?? "");
+      await CacheHelper.setValue(CacheKeys.userImage, user.userImagePath ?? "");
 
       return Right(user);
     } catch (e) {
