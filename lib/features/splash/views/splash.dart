@@ -40,7 +40,9 @@ class SplashViewBody extends StatelessWidget {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
+
           width: double.infinity,
           height: double.infinity,
           color: AppColors.appPrimaryColor,

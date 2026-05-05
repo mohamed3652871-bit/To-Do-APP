@@ -41,6 +41,7 @@ dependencies:
   image_picker: ^1.0.7
   flutter_launcher_icons: ^0.13.1
   get: ^4.7.3
+  redacted: ^1.0.13
 
 
 

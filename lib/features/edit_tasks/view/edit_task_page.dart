@@ -1,6 +1,6 @@
 import 'package:to_do_app/core/widgets/custom_buttons_box.dart';
 import '../../../core/widgets/custom_text_form.dart';
-import '../../home/data/task_model.dart';
+import '../../home/data/model/task_model.dart';
 import '../../../core/network/api_helper.dart';
 import '/core/utils/shared_packages.dart';
 

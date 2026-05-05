@@ -16,7 +16,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       emit(ProfileLoaded(username: username, imagePath: image));
     } catch (e) {
-      emit(ProfileError("Failed to load profile"));
+      emit(ProfileError("Failed to load Settings"));
     }
   }
 

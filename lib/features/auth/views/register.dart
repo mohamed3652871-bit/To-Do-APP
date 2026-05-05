@@ -8,9 +8,11 @@ import 'package:to_do_app/core/utils/app_icons.dart';
 import 'package:to_do_app/core/widgets/custom_buttons_box.dart';
 import 'package:to_do_app/core/widgets/custom_text_form.dart';
 
+
 import '../cubit/register_cubit.dart';
 import '../cubit/register_state.dart';
 import '../../../core/widgets/validators.dart';
+
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -29,7 +31,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,9 @@ class _RegisterPageState extends State<RegisterPage> {
           }
           if (state is RegisterImagePicked) {
             setState(() {
-              _selectedImagePath = context.read<RegisterCubit>().selectedImagePath;
+              _selectedImagePath = context
+                  .read<RegisterCubit>()
+                  .selectedImagePath;
             });
           }
         },
@@ -103,8 +106,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               offsetY: 5,
                               blurRadius: 4,
 
-                              onPressedFn: () {
-                                context.read<RegisterCubit>().pickImage();
+                              onPressedFn: () async{
+                                await RegisterCubit.get(context).pickImage();
+
                               },
                               text: TranslationKeys.pickImage.tr,
                               spreedR: 0,
@@ -206,7 +210,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ), //confirm password form
                           SizedBox(height: 23.h),
                           ElvButton(
-                            onPressedFn: () {
+                            onPressedFn: () async {
                               if (formKey.currentState!.validate()) {
                                 if (_passController.text !=
                                     _confirmPassController.text) {
@@ -220,10 +224,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                   return;
                                 }
 
-                                context.read<RegisterCubit>().register(
-                                  username: _userController.text,
+                                await RegisterCubit.get(context).register(
+                                  email: _userController.text,
                                   password: _passController.text,
-                                  imagePath: _selectedImagePath ,
+                                  passwordConfirm: _confirmPassController.text,
+                                  imagePath: _selectedImagePath,
                                 );
                               }
                             },

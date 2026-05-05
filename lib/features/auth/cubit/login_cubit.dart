@@ -6,17 +6,16 @@ import '../data/repo/login_repo.dart';
 import 'login_state.dart';
 
 class LoginCubit extends Cubit<AuthState> {
-  LoginCubit(this.repo) : super(AuthInitial());
-
+  LoginCubit() : super(AuthInitial());
   static LoginCubit get(context) => BlocProvider.of(context);
-  final LoginRepo repo;
+
 
   Future<void> loginFun({
     required String username,
     required String password,
   }) async {
     emit(AuthLoading());
-    final result = await repo.login(username, password);
+    final result = await LoginRepo.login(username, password);
 
     if (result.status) {
       LoginResponseModel loginResponseModel = LoginResponseModel.fromJson(
@@ -30,6 +29,15 @@ class LoginCubit extends Cubit<AuthState> {
         CacheKeys.refreshToken,
         loginResponseModel.refreshToken,
       );
+      await CacheHelper.setValue(
+        CacheKeys.username,
+        loginResponseModel.userModel?.username,
+      );
+      await CacheHelper.setValue(
+        CacheKeys.userImage,
+        loginResponseModel.userModel?.userImagePath,
+      );
+
       emit(AuthSuccess(loginResponseModel.userModel));
     } else {
       emit(AuthError(result.message));

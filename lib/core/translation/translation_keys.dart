@@ -50,7 +50,7 @@ class TranslationKeys {
 
   // Settings & Profile
   static const String settings = 'settings';
-  static const String profile = 'profile';
+  static const String profile = 'Settings';
   static const String changePassword = 'changePassword';
   static const String logout = 'logout';
 

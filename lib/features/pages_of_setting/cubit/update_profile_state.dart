@@ -15,6 +15,7 @@ class ProfileUpdateError extends ProfileUpdateState {
 }
 
 class ProfileDeleteLoading extends ProfileUpdateState {}
+class ProfileImagePicked extends ProfileUpdateState {}
 
 class ProfileDeleteSuccess extends ProfileUpdateState {
   final String message;

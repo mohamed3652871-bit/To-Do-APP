@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:get/get.dart';
 import '../../../core/cache/cache_helper.dart';
 import '../../../core/cache/cache_keys.dart';
 import '../../../core/translation/translation_keys.dart';
@@ -7,12 +7,12 @@ import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/my_app_bar.dart';
 import '../../../core/widgets/custom_buttons_box.dart';
 import '../../auth/views/login.dart';
-import '../../settings_page/views/change_password.dart';
-import '../../settings_page/views/settings.dart';
-import '../../settings_page/views/update_profile.dart';
+
+import '../../pages_of_setting/views/change_password.dart';
+import '../../pages_of_setting/views/settings.dart';
+import '../../pages_of_setting/views/update_profile.dart';
 import '../cubit/profile_cubit.dart';
 import '../cubit/profile_state.dart';
-
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 

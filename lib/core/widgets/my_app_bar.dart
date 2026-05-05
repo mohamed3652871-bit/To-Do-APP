@@ -1,8 +1,8 @@
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:to_do_app/core/translation/translation_keys.dart';
 
+import '../../features/Settings/views/settings.dart';
 import '../../features/add_tasks/view/add_task.dart';
-import '../../features/profile/views/profile.dart';
 import '../cache/cache_keys.dart';
 import '../cache/cache_helper.dart';
 import '../utils/shared_packages.dart';
@@ -42,7 +42,7 @@ class MyAppBar extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 
-        // ✅ مفيش maxHeight → flexible
+
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(20),
@@ -59,7 +59,6 @@ class MyAppBar extends StatelessWidget {
 
         child: Row(
           children: [
-            // 👤 Avatar
             Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -78,12 +77,11 @@ class MyAppBar extends StatelessWidget {
 
             const SizedBox(width: 10),
 
-            // 🧠 Text (مرن)
             Expanded(
               child: Text(
                 "${TranslationKeys.hello.tr}\n$usernameCached",
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis, // 🔥 يمنع overflow
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: width < 600 ? 14 : 16,
                   fontWeight: FontWeight.w500,
@@ -91,7 +89,6 @@ class MyAppBar extends StatelessWidget {
               ),
             ),
 
-            // ➕ زرار
             if (tasks)
               IconButton(
                 onPressed: () {

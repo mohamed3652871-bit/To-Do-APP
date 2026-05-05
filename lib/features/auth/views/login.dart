@@ -1,13 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
-
-import '../../../core/network/api_helper.dart';
 import '../../../core/translation/translation_keys.dart';
 import '../../home/views/home_page.dart';
 import '../cubit/login_cubit.dart';
 import '../cubit/login_state.dart';
 import '../../../core/widgets/validators.dart';
-import '../data/repo/login_repo.dart';
 import 'register.dart';
 import '../../../../core/utils/app_icons.dart';
 import '../../../../core/utils/shared_packages.dart';
@@ -43,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(LoginRepo(APIHelper())),
+      create: (context) => LoginCubit(),
       child: BlocConsumer<LoginCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {

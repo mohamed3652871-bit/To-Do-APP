@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 import 'core/cache/cache_helper.dart';
@@ -10,6 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheHelper.init();
   APIHelper.init();
+
   runApp(const MyApp());
 
 }
@@ -23,6 +25,7 @@ class MyApp extends StatelessWidget {
       designSize: const Size(375, 812),
       builder: (context, widget) {
         return  GetMaterialApp(
+
           translations: TranslationHelper(),
 
            locale: Locale('ar'),

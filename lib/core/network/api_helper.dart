@@ -4,7 +4,7 @@ import 'package:to_do_app/core/network/api_response.dart';
 
 import '../../features/auth/data/models/login_response_model.dart';
 import '../../features/auth/data/models/user_model.dart';
-import '../../features/home/data/task_model.dart';
+import '../../features/home/data/model/task_model.dart';
 import '../cache/cache_helper.dart';
 import '../cache/cache_keys.dart';
 import 'end_points.dart';
@@ -81,7 +81,7 @@ class APIHelper {
     );
   }
 
-   Future<ApiResponse> postRequest({
+  static Future<ApiResponse> postRequest({
     required String endPoint,
     required Map<String, dynamic>? data,
     bool isFormData = false,
@@ -109,7 +109,7 @@ class APIHelper {
     }
   }
 
-   Future<ApiResponse> getRequest({
+  static Future<ApiResponse> getRequest({
     required String endPoint,
     Map<String, dynamic>? queryParameters,
     bool isAuthorized=false,
@@ -132,15 +132,20 @@ class APIHelper {
     }
   }
 
-   Future<ApiResponse> putRequest({
+  static Future<ApiResponse> putRequest({
     required String endPoint,
-    required Map<String, dynamic>? queryParameters,
+     Map<String, dynamic>? queryParameters,
+    required Map<String, dynamic>? data,
+    bool isFormData = false,
     bool isAuthorized=false,
   })async
   {
     try{
       final response=await _dio.put(
         endPoint,
+        data: isFormData
+            ? FormData.fromMap(data!)
+            : data,
         queryParameters:queryParameters,
         options:isAuthorized? Options(
           headers: {
@@ -154,7 +159,7 @@ class APIHelper {
       return ApiResponse.fromError(e);
     }
   }
-   Future<ApiResponse> deleteRequest({
+   static Future<ApiResponse> deleteRequest({
     required String endPoint,
     required var data,
     bool isAuthorized=false,
@@ -481,28 +486,7 @@ class APIHelper {
     }
   }
 
-  static Future<Either<String, String>> deleteUserProfile() async {
-    try {
-      var response = await _dio.delete(
-        EndPoints.deleteUser,
-        options: Options(
-          headers: {
-            'Authorization':
-                'Bearer ${await CacheHelper.getValue(CacheKeys.accessToken)}',
-          },
-        ),
-      );
-      var data = response.data as Map<String, dynamic>;
-      return right(data['message'] ?? 'User deleted successfully');
-    } catch (e) {
-      if (e is DioException) {
-        var data = e.response?.data as Map<String, dynamic>;
-        return left(data['message'] ?? 'Something went wrong');
-      } else {
-        return left('Something went wrong');
-      }
-    }
-  }
+
 
 
 
