@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do_app/features/auth/cubit/splash_state.dart';
 import '../../../core/cache/cache_helper.dart';
 import '../../../core/cache/cache_keys.dart';
-import '../../../core/network/tasks_count_helper.dart';
 import '../../../core/utils/shared_packages.dart';
 
 class SplashCubit extends Cubit<SplashState> {
@@ -20,12 +19,6 @@ class SplashCubit extends Cubit<SplashState> {
       return;
     }
 
-    bool hasTasks = await AppFlowService.hasTasks();
-
-    if (hasTasks) {
-      emit(SplashGoToHome());
-    } else {
-      emit(SplashGoToHome());
-    }
-  }
+    emit(SplashGoToHome());
+      }
 }

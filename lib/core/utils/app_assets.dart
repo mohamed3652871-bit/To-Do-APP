@@ -4,9 +4,8 @@ abstract class AppAssets{
   static const String splashLogo ="${_svgAssetBasePath}splash.svg";
   static const String letsStartLogo ="${_svgAssetBasePath}letsStart.svg";
   static const String homeLogo ="${_svgAssetBasePath}home.svg";
-  static const String placeHolder ="${_imageAssetBasePath}placeholder.png";
-  static const String loginLogo ="${_imageAssetBasePath}palestine_flag2.PNG";
-  static const String userPhoto ="${_imageAssetBasePath}palestine_flag2.PNG";
+  static const String placeHolder ="${_imageAssetBasePath}palestine_flag.png";
+  static const String userPhoto ="${_imageAssetBasePath}palestine_flag.png";
 
 
 }

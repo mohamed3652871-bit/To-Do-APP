@@ -1,9 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:to_do_app/core/cache/cache_helper.dart';
 import 'package:to_do_app/core/cache/cache_keys.dart';
-
-import '../../../core/network/api_helper.dart';
 import '../../../core/translation/translation_keys.dart';
 import '../../../core/utils/shared_packages.dart';
 import '../../../core/widgets/custom_buttons_box.dart';
@@ -20,11 +20,13 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  String? _selectedImagePath;
+
 
   @override
   void dispose() {
-    userNameController.dispose();
+    _userNameController.dispose();
     super.dispose();
   }
 
@@ -35,9 +37,25 @@ class _UpdateProfileState extends State<UpdateProfile> {
       child: BlocConsumer<ProfileUpdateCubit, ProfileUpdateState>(
         listener: (context, state) {
 
+          if (state is ProfileImagePicked) {
+            setState(() {
+              _selectedImagePath = context
+                  .read<ProfileUpdateCubit>()
+                  .selectedImagePath;
+
+            });
+          }
+          if (state is ProfileUpdateSuccess) {
+            setState(() {
+
+            });
+          }
         },
         builder: (context, state) {
+          String? imagePath = CacheHelper.getValue(CacheKeys.userImage);
+
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             body: SafeArea(
               child: Container(
                 color: AppColors.appPrimaryColor,
@@ -58,17 +76,35 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             spreadRadius: 4,
                           ),
                         ],
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            CacheHelper.getValue(CacheKeys.userImage),
-                          ),
-                          fit: BoxFit.cover,
-                        ),
+
                       ),
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.appWhite,
+                        foregroundImage: _selectedImagePath != null
+                            ? FileImage(File(_selectedImagePath!))
+                            : (imagePath != null && imagePath.isNotEmpty)
+                            ? NetworkImage(imagePath)
+                            : const AssetImage(AppAssets.userPhoto),
+                        radius: 100.r,
+                      )
+                    ),
+                    SizedBox(height: 23.h),
+                    ElvButton(
+                      onPressedFn: () {
+                        ProfileUpdateCubit.get(context).pickImage();
+                      },
+                      buttonHeight: 25.h,
+                      buttonColor: AppColors.appBlack,
+                      shadowColor: AppColors.appGreen1,
+                      fontSize: 10.sp,
+                      buttonWidth: 100.w,
+                      fontWeight: FontWeight.w400,
+                      borderRadius: 15.r,
+                      text: TranslationKeys.pickImage.tr,
                     ),
                     SizedBox(height: 23.h),
                     TextFormFiledBox(
-                      controller: userNameController,
+                      controller: _userNameController,
                       boxColor: Colors.white,
                       hintText: TranslationKeys.email.tr,
                       borderRadius: 15,
@@ -84,12 +120,15 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     SizedBox(height: 23.h),
                     ElvButton(
                       onPressedFn: () async {
-                       print('aaaaaaaaaaaaaaaa');
+                        context.read<ProfileUpdateCubit>().updateUsername(
+                          _userNameController.text,
 
+
+                        );
                       },
 
                       buttonHeight: 48,
-                      buttonWidth: 331,
+                      buttonWidth: 240,
                       buttonColor: AppColors.appGreen1,
                       shadowColor: AppColors.appGreen1,
                       text: TranslationKeys.save.tr,
@@ -100,6 +139,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       fontSize: 19,
                       borderRadius: 14,
                     ),
+
                     SizedBox(height: 23.h),
                     ElvButton(
                       onPressedFn: () async {
@@ -122,23 +162,35 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   onPressed: () async {
                                     Navigator.pop(dialogContext);
 
-                                     ProfileUpdateCubit.get(
+                                    await ProfileUpdateCubit.get(
                                       context,
                                     ).deleteUser();
                                     if (state is ProfileDeleteSuccess) {
-                                      Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (BuildContext context) => const LoginPage()), (route) => true);
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              const LoginPage(),
+                                        ),
+                                        (route) => true,
+                                      );
                                       ScaffoldMessenger.of(
                                         parentContext,
                                       ).showSnackBar(
-                                        SnackBar(content: Text(state.message),duration: Duration(seconds: 2),),
+                                        SnackBar(
+                                          content: Text(state.message),
+                                          duration: Duration(seconds: 2),
+                                        ),
                                       );
-                                    }else if (state is ProfileDeleteError){
+                                    } else if (state is ProfileDeleteError) {
                                       ScaffoldMessenger.of(
                                         parentContext,
                                       ).showSnackBar(
-                                        SnackBar(content: Text(state.message),duration: Duration(seconds: 3),),
+                                        SnackBar(
+                                          content: Text(state.message),
+                                          duration: Duration(seconds: 3),
+                                        ),
                                       );
-
                                     }
                                   },
                                   child: Text(
@@ -150,9 +202,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             );
                           },
                         );
+                        
                       },
-                      buttonHeight: 48,
-                      buttonWidth: 240,
+                      buttonHeight: 30.h,
                       buttonColor: AppColors.appButtonRed,
                       shadowColor: AppColors.appButtonRed,
                       text: TranslationKeys.deleteUser.tr,

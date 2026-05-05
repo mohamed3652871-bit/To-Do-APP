@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:to_do_app/core/network/api_helper.dart';
 import 'package:to_do_app/core/network/api_response.dart';
 
@@ -20,7 +21,11 @@ class RegisterRepo {
         EndPoints.emailKey: email,
         EndPoints.passWordKey: password,
         EndPoints.confPassWordKey: passwordConfirm,
+
+        if (imagePath != null)
+          EndPoints.imageKey: await MultipartFile.fromFile(imagePath),
       },
+
       isFormData: true,
     );
   }

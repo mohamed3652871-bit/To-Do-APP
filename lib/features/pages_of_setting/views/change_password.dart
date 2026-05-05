@@ -1,3 +1,4 @@
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import '../../../core/cache/cache_helper.dart';
@@ -45,6 +46,8 @@ class ChangePassword extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          final imagePath=CacheHelper.getValue(CacheKeys.userImage);
+
           return Scaffold(
             body: SafeArea(
               child: Container(
@@ -67,7 +70,9 @@ class ChangePassword extends StatelessWidget {
                               blurRadius: 4,spreadRadius: 4),
                             ],
                             image: DecorationImage(
-                              image: NetworkImage(CacheHelper.getValue(CacheKeys.userImage)),
+                              image: imagePath != null && imagePath.startsWith('http')
+                                  ? NetworkImage(imagePath)
+                                  : AssetImage(AppAssets.userPhoto) as ImageProvider,
                               fit: BoxFit.cover,
                             ),
                           ),

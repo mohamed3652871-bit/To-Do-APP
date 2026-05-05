@@ -13,4 +13,5 @@ abstract class EndPoints {
   static const String emailKey = 'username';
   static const String passWordKey = 'password';
   static const String confPassWordKey = 'delete_user';
+  static const String imageKey = 'image';
 }
